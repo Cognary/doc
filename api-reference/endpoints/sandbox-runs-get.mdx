@@ -1,0 +1,34 @@
+---
+title: "POST /v1/memory/sandbox/runs/get"
+description: "Retrieve the current state of a sandbox run."
+---
+
+# POST /v1/memory/sandbox/runs/get
+
+Use this endpoint to inspect the state of a sandbox run after submission.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/runs/get" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "run_id":"sandbox_run_001"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "run_id": "sandbox_run_001",
+  "status": "queued",
+  "executor_mode": "mock"
+}
+```
+
+## Choose this route when
+
+Use `runs/get` when you need current sandbox run state. If you need output details, go to `runs/logs` or `runs/artifact`.

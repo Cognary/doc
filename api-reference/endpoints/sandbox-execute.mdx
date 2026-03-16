@@ -1,0 +1,62 @@
+---
+title: "POST /v1/memory/sandbox/execute"
+description: "Queue or execute a sandbox run under explicit sandbox safety and budget constraints."
+---
+
+# POST /v1/memory/sandbox/execute
+
+Use this endpoint to execute or enqueue a sandbox run.
+
+## What it is for
+
+1. controlled execution
+2. sync or async sandbox runs
+3. budgeted execution under policy constraints
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/execute" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "run_id":"sandbox_run_001",
+    "command":["echo","hello from sandbox"],
+    "mode":"async"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `run_id`
+4. execution command or task payload
+5. `mode`
+
+## Response fields that matter first
+
+1. `accepted`
+2. `run_id`
+3. `status`
+4. `executor_mode`
+
+## Example response
+
+```json
+{
+  "accepted": true,
+  "run_id": "sandbox_run_001",
+  "status": "queued",
+  "executor_mode": "mock"
+}
+```
+
+## Important boundary
+
+Sandbox routes are capability-gated. If sandbox is disabled, admin-only, or the executor is unavailable, treat that as an explicit product boundary instead of assuming ordinary request failure.
+
+## Choose this route when
+
+Use `sandbox/execute` when you want a sandbox run to start now. If you need a stable session first, create it with `sandbox/sessions`. If the run already exists, move to `runs/get`, `runs/logs`, `runs/artifact`, or `runs/cancel`.

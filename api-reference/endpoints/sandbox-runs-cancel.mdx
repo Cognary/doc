@@ -1,0 +1,33 @@
+---
+title: "POST /v1/memory/sandbox/runs/cancel"
+description: "Cancel an active sandbox run under explicit execution control."
+---
+
+# POST /v1/memory/sandbox/runs/cancel
+
+Use this endpoint when an active sandbox run should be stopped cleanly.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/runs/cancel" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "run_id":"sandbox_run_001"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "run_id": "sandbox_run_001",
+  "status": "cancelled"
+}
+```
+
+## Choose this route when
+
+Use `runs/cancel` when a queued or active sandbox run should stop. If you only need to inspect the run, stay on `runs/get`.

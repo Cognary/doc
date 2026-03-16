@@ -1,0 +1,119 @@
+---
+title: "What Aionis Is"
+description: "Understand Aionis through four capability lines: memory and context, handoff, replay, and policy."
+---
+
+# What Aionis Is
+
+Aionis is an execution memory layer for agent systems.
+
+It lets useful work survive across runtime boundaries, so work can be:
+
+1. remembered
+2. handed off
+3. replayed
+4. governed
+
+That sentence is easy to skim past, but it is the core product shape. Aionis does not sit at the top as a new agent framework. It sits at the execution boundary, where context gets assembled, work gets handed off, tool choices get shaped, and successful paths become candidates for reuse.
+
+That is why the product is easier to understand through capability lines than through internal packages. A developer does not start by caring how state is stored or how transitions are modeled. They start by caring whether the next session can continue useful work without falling apart.
+
+The simplest way to understand the product is through four capability lines, not backend internals.
+
+There is also a fifth thing worth knowing once you decide the product matters:
+
+**Aionis is already growing an execution continuity kernel behind the current route family.**
+
+That kernel is not a separate public product yet. It is the internal contract that lets the current product line carry durable task state instead of only summaries and prompt-shaped memory.
+
+## 1. Memory And Context
+
+Aionis stores durable execution memory and assembles bounded context for the next decision.
+
+This is not just about storing facts. It is about deciding what survives, what should be retrieved now, and how much context the next decision actually needs. Good memory without context assembly still leaves the next model turn overloaded or irrelevant. Good context assembly without durable memory still leaves the system constantly rebuilding itself from scratch.
+
+The product value here is not “infinite recall.” It is controlled continuity under budget.
+
+## 2. Handoff
+
+Aionis turns handoff from an informal note into a structured continuity artifact.
+
+This matters because most multi-agent and human-agent collaboration currently depends on weak transmission. One actor leaves a paragraph. The next actor guesses what was important. Handoff quality becomes a hidden variable.
+
+Aionis tries to make that boundary explicit. A handoff can carry anchor, state, recovery text, and continuity metadata, so the next actor is not forced to reconstruct intent from fragments.
+
+## 3. Replay
+
+Aionis turns successful execution into replayable playbooks.
+
+Replay is one of the strongest differences between “memory for agents” and “execution memory for agents.” A memory layer helps a future run remember what happened. A replay layer helps a future run reuse a successful path under explicit rules.
+
+That is important for both cost and reliability. If the system already found a good path, you should not need a full-price model loop to rediscover it every time.
+
+## 4. Policy
+
+Aionis makes action selection inspectable, enforceable, and reviewable.
+
+This is where Aionis stops being a passive store. Policy means the system can shape what happens before and after tool execution: which tool is allowed, which rule applied, where feedback lands, and how the run should adapt over time.
+
+Without that layer, many agent systems can remember and summarize but still cannot govern themselves in a way operators can inspect.
+
+## The kernel behind the product
+
+Under the current external surface, Aionis now has three connected continuity contracts:
+
+1. `ExecutionState v1`
+2. `ExecutionPacket v1`
+3. `ControlProfile v1`
+
+In product terms, they answer three practical questions:
+
+1. where the task currently is
+2. what the next role or stage should see
+3. how execution is allowed to proceed
+
+Taken together, those three contracts are the start of a deeper product truth: Aionis is becoming able to preserve not only memory about work, but continuity of the work itself.
+
+This matters because Aionis is no longer only storing memory and recovering handoffs. It is starting to preserve coding-task continuity as explicit state that can survive handoff, feed context assembly, and shape tool selection.
+
+The important boundary is that this rollout is additive. The product still speaks through the same route family. The kernel is being introduced behind `memory/write`, `handoff/store`, `handoff/recover`, `planning/context`, `context/assemble`, and `tools/select` instead of replacing them with a new public API line.
+
+## One route-family map
+
+```text
+memory/write           -> durable facts and continuity state
+handoff/store/recover  -> structured continuation across boundaries
+planning/context       -> planner-facing continuity assembly
+context/assemble       -> runtime-facing continuity bundle
+tools/select           -> governed action choice
+replay/*               -> reusable execution paths
+```
+
+If you are evaluating Aionis as a serious continuity system, this is the part that explains why the current product wedge is getting stronger rather than merely accumulating more endpoints.
+
+## Read the line that matches your pain
+
+If teams keep rediscovering the same context, start with [Memory And Context](/what/memory-context). If work keeps degrading during continuation or collaboration, start with [Handoff](/what/handoff). If successful execution keeps getting rerun from scratch, start with [Replay](/what/replay). If routing and adaptation feel opaque, start with [Policy](/what/policy).
+
+## Choose the closest pain first
+
+Start with the line that matches your actual failure mode:
+
+1. repeated rediscovery
+2. lossy cross-session continuation
+3. expensive repeat execution
+4. uninspectable routing and adaptation
+
+Then follow it into implementation:
+
+1. [Quickstart](/how/quickstart)
+2. [Complete Flow](/how/complete-flow)
+3. [API Contract](/reference/api-contract)
+
+If you are deciding whether the product is real, the right question is not “does Aionis have many APIs?” The right question is “which boundary failure hurts us most today, and does Aionis have a coherent answer for that boundary?” That is why this page is organized around capability lines. It keeps the product legible from the outside.
+
+This page should leave you with one decision, not five. Pick the product line that matches your real failure mode, then move to [How To Use Aionis](/how) if you want to try it, or [Reference](/reference) if you are already at contract and operations depth.
+
+## Choose this page when
+
+Use this page when you already believe the problem is real and now need the product model: what the lines are, how they differ, and where the execution continuity kernel sits behind them.

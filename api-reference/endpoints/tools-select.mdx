@@ -1,0 +1,125 @@
+# POST /v1/memory/tools/select
+
+> `POST /v1/memory/tools/select`
+
+Applies policy to candidate tools and persists a provenance decision.
+
+## Request schema
+
+Required:
+
+1. `context`
+2. `candidates[]` (min 1)
+
+Common fields:
+
+1. `tenant_id?: string`
+2. `scope?: string`
+3. `run_id?: string`
+4. `context: object`
+5. `candidates: string[]`
+6. `include_shadow?: boolean` (default `false`)
+7. `rules_limit?: number` (default 50, max 200)
+8. `strict?: boolean` (default `true`)
+
+Kernel-aware inputs:
+
+1. `execution_state_v1?: object`
+2. `context.control_profile_v1?: object`
+
+## Example request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/tools/select" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"support",
+    "run_id":"run_20260305_001",
+    "context":{"intent":"billing_support"},
+    "candidates":["ticket_router","email_sender"],
+    "strict":true
+  }' | jq
+```
+
+## Response schema
+
+Key response fields:
+
+1. `selection.selected`
+2. `selection.allowed[]`
+3. `rules.applied`
+4. `decision.decision_id`
+5. `decision.decision_uri`
+6. `decision.run_id`
+7. `execution_kernel.control_profile_origin`
+8. `execution_kernel.current_stage`
+9. `execution_kernel.active_role`
+
+## Example response
+
+```json
+{
+  "selection": {
+    "selected": "ticket_router",
+    "allowed": ["ticket_router"]
+  },
+  "rules": {
+    "applied": {
+      "sources": [
+        {
+          "rule_node_id": "rule_001"
+        }
+      ]
+    }
+  },
+  "decision": {
+    "decision_id": "decision_001",
+    "decision_uri": "memory://decision/decision_001",
+    "run_id": "run_20260305_001"
+  },
+  "execution_kernel": {
+    "control_profile_origin": "state_derived",
+    "current_stage": "implementation",
+    "active_role": "builder"
+  }
+}
+```
+
+## Idempotency
+
+1. Not idempotent by default.
+2. Each successful call persists a decision record.
+3. Avoid blind retries; if you retry, keep `run_id` stable and dedupe on your side.
+
+## Rate limit
+
+1. Uses recall-class limiter and recall tenant quota.
+2. Back off on `429` and `5xx` only.
+
+## Error codes
+
+Common errors:
+
+1. `invalid_request` (400)
+2. `unauthorized` / `forbidden` (401/403)
+3. `rate_limited_*` (429)
+
+## Replay IDs to persist
+
+1. `request_id`
+2. `run_id`
+3. `decision.decision_id`
+4. `decision.decision_uri`
+5. `rules.applied.sources[]` rule IDs
+
+## Operational notes
+
+1. Use one `run_id` per execution attempt and keep it across decision and feedback.
+2. Persist `decision_id` before action execution to ensure replay continuity.
+3. `execution_kernel.control_profile_origin` tells you whether tool shaping came from a continuity-delivered profile or was derived from execution state.
+4. This route is one of the first live runtime surfaces where the continuity kernel affects real behavior instead of only returning metadata.
+
+## Choose this route when
+
+Use `tools/select` when you want the governed choice and a durable decision record. If you only need to inspect raw rules against context, use `rules/evaluate` first.

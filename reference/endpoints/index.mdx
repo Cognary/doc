@@ -1,0 +1,50 @@
+---
+title: "Endpoint Reference"
+description: "Start from the verified Aionis endpoints, then inspect replay and deeper routes with explicit status boundaries."
+---
+
+# Endpoint Reference
+
+This is the endpoint-level reference for the highest-value Aionis routes.
+
+It starts with the routes most likely to matter during evaluation and first integration.
+
+## Fast route-family map
+
+```text
+memory/write -> recall_text -> context/assemble -> rules/evaluate -> tools/select
+handoff/store -> handoff/recover
+replay/runs/get -> playbooks/compile_from_run -> playbooks/candidate -> playbooks/run
+```
+
+Read the endpoint pages in that order if you want the shortest path from first proof to deeper governed execution.
+
+## Verified first
+
+These pages were selected because they are the shortest path from evaluation to real integration:
+
+1. [POST /v1/memory/write](/api-reference/endpoints/write)
+2. [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text)
+3. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
+4. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
+5. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
+6. [POST /v1/memory/resolve](/api-reference/endpoints/resolve)
+
+## Replay endpoints in reference
+
+Replay pages are currently code-backed or public-evidence-backed, but not yet fully live-verified in the current validation scope.
+
+1. [POST /v1/memory/replay/runs/get](/api-reference/endpoints/replay-runs-get)
+2. [POST /v1/memory/replay/playbooks/compile_from_run](/api-reference/endpoints/replay-compile-from-run)
+3. [POST /v1/memory/replay/playbooks/get](/api-reference/endpoints/replay-playbook-get)
+4. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
+5. [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run)
+6. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
+7. [POST /v1/memory/replay/playbooks/repair/review](/api-reference/endpoints/replay-repair-review)
+
+## Verified scope
+
+The current verification scope is:
+
+1. `tenant_id = default`
+2. `scope = docs_v4_verified`

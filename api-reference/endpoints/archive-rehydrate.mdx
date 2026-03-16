@@ -1,0 +1,50 @@
+---
+title: "POST /v1/memory/archive/rehydrate"
+description: "Rehydrate archived nodes back into an active memory path under explicit write control."
+---
+
+# POST /v1/memory/archive/rehydrate
+
+Use this endpoint when archived memory must be brought back into an active path.
+
+## What it is for
+
+1. controlled archive recovery
+2. reactivating old memory for current workflows
+3. lifecycle management beyond simple write and recall
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/archive/rehydrate" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_archive",
+    "node_ids":["node_001"]
+  }' | jq
+```
+
+## Response fields that matter first
+
+1. `commit_id`
+2. `commit_uri`
+3. `rehydrated_node_ids`
+
+## Example response
+
+```json
+{
+  "commit_id": "commit_001",
+  "commit_uri": "memory://commit/commit_001",
+  "rehydrated_node_ids": ["node_001"]
+}
+```
+
+## Important boundary
+
+This is a lifecycle route, not a first-evaluation route. Use it when memory retention policy and recovery behavior are already part of your operating model.
+
+## Choose this route when
+
+Use `archive/rehydrate` when archived memory has to come back into an active path. If the node is merely inactive rather than archived, `nodes/activate` is the narrower lifecycle action.

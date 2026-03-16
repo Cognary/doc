@@ -1,0 +1,127 @@
+---
+title: "SDK And HTTP"
+description: "Choose between the TypeScript SDK, Python SDK, and raw HTTP when integrating Aionis into a real application."
+---
+
+# SDK And HTTP
+
+Choose the client surface by friction, not by ideology.
+
+The practical order is:
+
+1. use the TypeScript SDK when it covers your path
+2. use Python SDK where its surface is enough
+3. fall back to raw HTTP for routes not yet wrapped in the published SDKs
+
+## When to use each path
+
+### TypeScript SDK
+
+Use it when:
+
+1. your app already runs in Node or TypeScript
+2. you want the shortest path from evaluation to production code
+3. you want the bundled local developer CLI
+
+### Python SDK
+
+Use it when:
+
+1. your runtime already lives in Python
+2. you need the same core memory, handoff, policy, and replay path with Pythonic naming
+3. you are comfortable keeping Lite startup on the shared CLI path
+
+### Raw HTTP
+
+Use it when:
+
+1. you are validating a route before wrapping it in your own client
+2. you need a surface that is newer than the published SDK helper
+3. you want the clearest possible contract view first
+
+## The real tradeoff
+
+This choice is not about language preference alone.
+
+It is about where you want complexity to live.
+
+Use an SDK when you want:
+
+1. less boilerplate
+2. faster local success
+3. fewer handwritten request wrappers
+
+Use raw HTTP when you want:
+
+1. exact visibility into the live contract
+2. immediate access to the newest route surfaces
+3. your own client discipline instead of waiting for helper methods
+
+For most teams, the right pattern is hybrid:
+
+1. use SDK for the stable, frequent calls
+2. use raw HTTP for newer or narrower surfaces
+3. wrap only the calls that survive your first real integration
+
+That keeps the integration small while still letting you move fast.
+
+## Recommended onboarding sequence
+
+For most external teams:
+
+1. prove value with `curl` or one SDK call
+2. move into `planning/context`, handoff, or policy
+3. only then optimize the integration style
+
+## What to decide first
+
+Do not start by debating which client surface is philosophically cleaner.
+
+Start by asking:
+
+1. what is the first continuity-sensitive flow I need to prove
+2. which route family does it touch
+3. do I need the newest surface or just the shortest path
+
+If the answer is “I want the shortest path,” use the SDK that already covers your flow.
+
+If the answer is “I need exact control and the latest route surface,” start with HTTP and keep the request/response trace visible while the integration is still moving.
+
+## Best first decision
+
+If you are deciding quickly:
+
+1. start with [Quickstart](/how/quickstart)
+2. use [Memory APIs](/api-reference/memory) if you want the shortest contract-first path
+3. use [OpenClaw Adapter](/how/openclaw-adapter) if you want the strongest applied runtime demo
+
+## Local port map
+
+The local entrypoints do not all use the same default port:
+
+1. repository Lite with `npm run start:lite`: `http://localhost:3001`
+2. published SDK CLI with `npx @aionis/sdk dev`: `http://127.0.0.1:3321`
+3. `codex-aionis-project.sh` default MCP target: `http://127.0.0.1:3101`
+
+Treat these as separate defaults unless you override them explicitly.
+
+## Smallest side-by-side example
+
+```ts
+await client.write({
+  tenant_id: 'default',
+  scope: 'docs_sdk',
+  input_text: 'Customer prefers email',
+  nodes: [{ type: 'event', memory_lane: 'shared', text_summary: 'Customer prefers email' }]
+})
+```
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_sdk","input_text":"Customer prefers email","nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email"}]}' | jq
+```
+
+## Choose this guide when
+
+Use this page when the question is not “what does Aionis do?” but “which client surface should I integrate with first?” Pick the surface that keeps your first proof shortest.

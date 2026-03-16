@@ -1,0 +1,50 @@
+---
+title: "POST /v1/memory/nodes/activate"
+description: "Activate stored memory nodes under explicit lifecycle control."
+---
+
+# POST /v1/memory/nodes/activate
+
+Use this endpoint to activate nodes as part of memory lifecycle control.
+
+## What it is for
+
+1. node lifecycle transitions
+2. restoring nodes to active use
+3. controlled state changes in stored memory
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/nodes/activate" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_archive",
+    "node_ids":["node_001"]
+  }' | jq
+```
+
+## Response fields that matter first
+
+1. `commit_id`
+2. `commit_uri`
+3. `activated_node_ids`
+
+## Example response
+
+```json
+{
+  "commit_id": "commit_002",
+  "commit_uri": "memory://commit/commit_002",
+  "activated_node_ids": ["node_001"]
+}
+```
+
+## Important boundary
+
+This route matters once memory governance and lifecycle policy become part of your production model. It is not a first-read endpoint.
+
+## Choose this route when
+
+Use `nodes/activate` when the node already exists and just needs to move back into active use. If the memory was archived out of the active path, use `archive/rehydrate`.

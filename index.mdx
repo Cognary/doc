@@ -1,0 +1,118 @@
+---
+title: "Aionis"
+description: "Execution memory for agent systems that should not lose useful work across sessions, handoffs, replay paths, and review loops."
+---
+
+# Aionis
+
+Execution memory for agent systems that should not lose useful work across sessions, handoffs, replay paths, and review loops.
+
+## Start here
+
+1. [Proof](/proof)
+2. [Why Aionis](/why)
+3. [What Aionis Is](/what)
+4. [How To Use Aionis](/how)
+5. [Reference](/reference)
+
+## Smallest proof on your machine
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_home","input_text":"Customer prefers email","nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email"}]}' | jq
+
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_home","anchor":"task_001","handoff_kind":"task_handoff","summary":"Continue follow-up","handoff_text":"Draft the reply"}' | jq
+```
+
+## What Aionis changes
+
+Without Aionis, useful work often collapses into:
+
+1. lost context
+2. lossy summaries
+3. duplicated reasoning
+4. expensive retries
+
+With Aionis, that work can survive as:
+
+1. memory that can be recalled under budget
+2. handoff that can be recovered exactly
+3. replay that can reuse successful execution paths
+4. policy that makes routing and adaptation inspectable
+
+## Public proof
+
+Current public evidence already supports the core value proposition:
+
+1. `30.03%` lower input tokens, `77%` lower output tokens, and `33.24%` lower total tokens on real continuation work
+2. cross-runtime handoff recovery improved from `33.33%` to `100%`
+3. strict replay on `pallets/click` ran with `0` model tokens in the disclosed strict mode
+4. OpenClaw already shows Aionis controlling a real agent tool loop with public benchmark evidence
+
+Use:
+
+1. [Proof](/proof) for the shortest evaluation path and current public numbers
+2. [Benchmarks And SLO](/reference/benchmarks-and-slo) for the broader evidence layer
+
+## Killer demo right now
+
+The strongest applied Aionis demo today is [OpenClaw Adapter](/how/openclaw-adapter).
+
+Use it when you want:
+
+1. a real runtime integration instead of isolated API calls
+2. one loop that touches context, policy, replay, and handoff
+3. the fastest serious demo path after Lite
+
+## First success
+
+If you want to test whether Aionis is real instead of just well-positioned:
+
+1. [Quickstart](/how/quickstart)
+2. [Complete Flow](/how/complete-flow)
+3. [Endpoint Reference](/reference/endpoints)
+
+## Read by intent
+
+If you are deciding whether Aionis matters:
+
+1. [Proof](/proof)
+2. [Why Aionis](/why)
+
+If you want the product model before implementation details:
+
+1. [What Aionis Is](/what)
+
+If you want first success quickly:
+
+1. [Quickstart](/how/quickstart)
+2. [Complete Flow](/how/complete-flow)
+3. [OpenClaw Adapter](/how/openclaw-adapter)
+
+If you need the deep surfaces:
+
+1. [Reference](/reference)
+2. [Verification Status](/reference/verification-status)
+3. [API Reference](/api-reference/)
+
+## Why this is not just a memory plugin
+
+A retrieval-only memory layer can help an agent remember text.
+
+Aionis is trying to preserve execution continuity:
+
+1. planner-facing context can be assembled under budget, not only recalled as raw text
+2. handoff can be stored and recovered as a structured artifact
+3. tool choice can create persisted decisions with `decision_id` and `decision_uri`
+4. successful runs can be compiled into replayable playbooks
+
+That difference matters because the real failure is usually not that the model forgot a sentence.
+
+It is that the system lost the execution contract.
+
+## Choose this page when
+
+Use this page when you need the shortest possible orientation: what Aionis changes, where the proof is, and where to go next.

@@ -1,0 +1,69 @@
+---
+title: "Configuration Reference"
+description: "Review the runtime configuration groups that matter most for Aionis auth, isolation, embeddings, and production safety."
+---
+
+# Configuration Reference
+
+This page summarizes key runtime configuration groups.
+
+## Core runtime
+
+1. `AIONIS_MODE`
+2. `APP_ENV`
+3. `PORT`
+4. `DATABASE_URL`
+
+## Auth and isolation
+
+1. `MEMORY_AUTH_MODE`
+2. `MEMORY_API_KEYS_JSON`
+3. `MEMORY_JWT_HS256_SECRET`
+4. `MEMORY_TENANT_ID`
+5. `MEMORY_SCOPE`
+
+## Embeddings
+
+1. `EMBEDDING_PROVIDER`
+2. `EMBEDDING_DIM`
+3. Provider-specific key/model variables.
+
+## Limits and quotas
+
+1. `RATE_LIMIT_ENABLED`
+2. `TENANT_QUOTA_ENABLED`
+3. Endpoint-specific RPS/burst settings.
+
+## Recommended workflow
+
+1. Keep separate env values for dev/staging/prod.
+2. Store secrets outside source control.
+3. Validate config with staging smoke and production gate before rollout.
+4. Use the built-in feature bundle commands when you want a copy-ready starting point for common default-off toggles.
+
+## Feature bundle shortcuts
+
+```bash
+npm run -s env:bundle:local-safe
+npm run -s env:bundle:experimental
+npm run -s env:bundle:team-shared
+npm run -s env:bundle:high-risk
+```
+
+The maintained follow-up pages are [Production Operations](/reference/production-ops) and [Feature Bundles](/guide/tutorials/feature-bundles).
+
+## Baseline production settings
+
+| Key | Typical production value | Why |
+| --- | --- | --- |
+| `AIONIS_MODE` | `service` | Enables service-oriented runtime profile |
+| `APP_ENV` | `prod` | Activates production guard behavior |
+| `MEMORY_AUTH_MODE` | `api_key` or `api_key_or_jwt` | Prevents unauthenticated writes/reads |
+| `RATE_LIMIT_ENABLED` | `true` | Protects API under burst load |
+| `TENANT_QUOTA_ENABLED` | `true` | Enforces tenant-level fairness and isolation |
+| `TRUST_PROXY` | `true` (behind trusted proxy) | Correct client IP handling for limits/audit |
+| `CORS_ALLOW_ORIGINS` | explicit allowlist | Reduces cross-origin abuse risk |
+
+## Choose this page when
+
+Use this page when your question is “which environment variables matter most before rollout?” If you are already validating a specific deployment, move straight to [Production Operations](/reference/production-ops) and [Go-live Checklist](/operations/go-live).

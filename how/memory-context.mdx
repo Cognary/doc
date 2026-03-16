@@ -1,0 +1,84 @@
+---
+title: "Memory And Context Guide"
+description: "Use Aionis memory and context APIs to write durable execution facts and assemble bounded context for the next step."
+---
+
+# Memory And Context
+
+Most teams should start here.
+
+If you cannot reliably write memory and recover bounded context later, the rest of Aionis will stay abstract.
+
+## What is live in code today
+
+The core memory and context path is already implemented around these routes:
+
+1. `POST /v1/memory/write`
+2. `POST /v1/memory/recall`
+3. `POST /v1/memory/recall_text`
+4. `POST /v1/memory/planning/context`
+5. `POST /v1/memory/context/assemble`
+
+## Smallest useful proof
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_memory",
+    "input_text":"Customer prefers email for invoice follow-up",
+    "nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email for invoice follow-up"}]
+  }' | jq
+
+curl -sS "$BASE_URL/v1/memory/recall_text" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_memory",
+    "query_text":"invoice follow-up preference",
+    "limit":3
+  }' | jq
+```
+
+## What a real first integration looks like
+
+The wrong first integration is to throw every event into Aionis and hope context quality becomes magically better.
+
+The right first integration is narrower:
+
+1. write one class of execution facts you know matter later
+2. prove they can be recalled under budget
+3. only then add planner or context assembly on top
+
+In practice that means choosing one continuity-sensitive slice:
+
+1. code-review follow-up
+2. patch continuation after interruption
+3. handoff into the next runtime step
+
+Then keep the write format disciplined enough that later recall and assembly have something real to work with.
+
+## What success looks like
+
+A good first result is not “the model saw more text.”
+
+A good first result is:
+
+1. `write` creates durable artifacts you can trace later
+2. `recall_text` returns the right candidates without flooding the model
+3. `planning/context` or `context/assemble` can carry those facts forward in a compact form
+
+If you cannot get those three things, do not move on to replay or policy yet. Fix memory and context first, because everything else depends on them.
+
+## Best first integration
+
+Start with:
+
+1. `write`
+2. `recall_text`
+3. `planning/context` only after the first two are stable
+
+## Choose this guide when
+
+Use this page when the first thing you need to prove is “can Aionis store the right facts and recover them under budget?” If that proof is still shaky, do not jump to replay or policy yet.

@@ -1,0 +1,85 @@
+---
+title: "Memory And Context"
+description: "See how Aionis turns durable memory into bounded, planner-ready context instead of another retrieval-only memory layer."
+---
+
+# Memory And Context
+
+Memory is the first thing people notice in Aionis.
+
+Context is what makes that memory operational.
+
+That distinction matters.
+
+## What Aionis actually does
+
+Aionis does not only store past facts.
+
+It also:
+
+1. recalls them under budget
+2. assembles them into planner-ready context
+3. applies layer selection
+4. exposes compact summaries for runtime use
+
+## Smallest route map
+
+```text
+memory/write        -> persist durable facts
+recall_text         -> retrieve bounded candidates
+planning/context    -> planner-facing summary
+context/assemble    -> runtime-facing bundle
+```
+
+This is why the product is stronger than a vector memory plugin.
+
+## Why this capability exists
+
+The practical problem is not "how do I store more text?"
+
+The real problem is:
+
+1. how does the next step see the right context
+2. without rereading the repo
+3. without flooding the model
+4. without losing traceability
+
+## What changes in practice
+
+Without Aionis, teams usually rebuild context through a messy mix of prompt history, repo rereads, and one-off summaries.
+
+That leads to three common failures:
+
+1. the next session sees too much irrelevant context
+2. the actually important execution facts get dropped
+3. no one can explain later why the runtime saw what it saw
+
+With Aionis, memory and context become a controlled handoff between past work and the next decision.
+
+The write path preserves durable facts such as events, summaries, commits, and continuity payloads. The recall and assembly paths then decide what should be surfaced now under explicit budgets.
+
+That is why memory and context belong together in Aionis. Memory without bounded assembly becomes clutter. Context without durable memory becomes improvisation.
+
+## What to look for when evaluating it
+
+If you want to know whether this capability is real in your workflow, do not start with abstract retrieval quality.
+
+Start with these questions instead:
+
+1. after one write, can the next step recover the right facts without rereading the whole repo
+2. can planner-facing context stay compact while still carrying the right constraints
+3. can you keep `request_id`, `commit_uri`, and later `decision_id` connected across the flow
+
+If the answer is yes, Aionis is already doing more than acting like a memory plugin.
+
+## Continue from product to proof
+
+1. [Memory And Context Guide](/how/memory-context)
+2. [Quickstart](/how/quickstart)
+3. [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text)
+4. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
+5. [OpenClaw Adapter](/how/openclaw-adapter)
+
+## Choose this page when
+
+Use this page when the pain is repeated rediscovery and bad context carryover. If you already know you need to try the routes yourself, move to the guide or endpoint pages.

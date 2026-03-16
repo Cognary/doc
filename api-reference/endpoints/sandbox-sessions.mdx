@@ -1,0 +1,37 @@
+---
+title: "POST /v1/memory/sandbox/sessions"
+description: "Create a sandbox session before controlled sandbox execution."
+---
+
+# POST /v1/memory/sandbox/sessions
+
+Use this endpoint to create a sandbox session before issuing sandbox execution requests.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/sessions" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "session_id":"sandbox_session_001"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "session_id": "sandbox_session_001",
+  "session_uri": "memory://sandbox/session_001"
+}
+```
+
+## Important boundary
+
+Sandbox is experimental and should be treated as a controlled execution surface, not a casual extension of normal memory APIs.
+
+## Choose this route when
+
+Use `sandbox/sessions` when your sandbox execution flow needs a stable session boundary before issuing runs. If you only need one isolated run, most of the time `sandbox/execute` is the more direct place to start.

@@ -1,0 +1,126 @@
+---
+title: "OpenClaw Adapter"
+description: "The clearest applied Aionis demo today: OpenClaw plus policy, replay, handoff, and externalized context at the tool-loop boundary."
+---
+
+# OpenClaw Adapter
+
+If someone asks for the fastest serious Aionis demo, this is the one.
+
+`@aionis/openclaw-adapter` is not a toy integration. It attaches Aionis to a real OpenClaw runtime path and changes what happens at the point where agent systems usually go wrong: the tool loop.
+
+That is exactly why this page deserves more attention than a normal integration note. Most demos show that a product can be called. This one shows that Aionis can change the behavior of a live runtime where bad choices, repeated steps, and brittle continuation actually matter.
+
+Repo:
+
+1. [clawbot-aionis-adapter](https://github.com/Cognary/clawbot-aionis-adapter)
+
+## Smallest serious demo path
+
+```bash
+# 1. start Aionis Lite
+npm run start:lite
+
+# 2. point the adapter at Lite
+export AIONIS_BASE_URL="http://127.0.0.1:3001"
+
+# 3. run one OpenClaw task and inspect context, decisions, feedback, and replay/handoff behavior
+```
+
+## Why this demo matters
+
+The adapter turns Aionis from a set of APIs into an observable operating model:
+
+1. `context/assemble` gives the run compact execution state before the model starts drifting
+2. `rules/evaluate` and `tools/select` shape expensive tool decisions before they execute
+3. `tools/feedback` and `write` persist what actually happened after each tool call
+4. `replay` and `handoff` provide clean escape hatches when a run should stop, reroute, or resume
+
+That is much closer to the real Aionis story than a standalone memory demo.
+
+In other words, the adapter puts Aionis at the boundary where expensive failure happens. It does not merely remember a conversation. It helps shape which tools are chosen, what context is assembled, how continuity is persisted, and what happens when the system should recover instead of blindly pressing forward.
+
+## What the adapter proves
+
+The adapter is the strongest applied proof of Aionis today because it shows all four product lines in one runtime:
+
+1. memory and context
+2. policy gating
+3. replay dispatch
+4. handoff fallback
+
+It also proves those surfaces against a real host boundary:
+
+1. OpenClaw hook binding exists
+2. Aionis calls happen on actual runtime paths
+3. evidence is recorded as benchmark artifacts, not only screenshots or anecdotes
+
+That last point is important. A surprising number of AI infrastructure demos look persuasive on video and collapse under inspection. This one is valuable because it leaves behind evidence that can be read, compared, and challenged.
+
+## Where to read the evidence
+
+If you want the benchmark numbers first, start with [Proof](/proof).
+
+If you want the source evidence directly, use the adapter repo materials below. They are worth reading because they show not only outcomes, but the actual runtime slices, task cases, and benchmark artifacts behind those outcomes.
+
+1. [Adapter README](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/README.md)
+2. [Benchmark Summary](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-aionis-benchmark-summary.md)
+3. [One-Prompt Multi-Agent Case Study](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-one-prompt-multi-agent-case-study.md)
+4. [Google Runtime Case Study](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-google-runtime-case-study.md)
+5. [Evidence Index](https://github.com/Cognary/clawbot-aionis-adapter/tree/main/evidence)
+
+## What Aionis is actually doing in this demo
+
+This integration maps cleanly onto the current Aionis contract:
+
+1. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
+2. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
+3. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
+4. [POST /v1/memory/tools/feedback](/api-reference/endpoints/tools-feedback)
+5. [POST /v1/memory/write](/api-reference/endpoints/write)
+6. [POST /v1/handoff/store](/api-reference/endpoints/handoff)
+7. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
+8. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
+
+That matters because the demo is not inventing a parallel product surface. It is exercising the same product surface the docs are already describing.
+
+That is why the adapter is such a good bridge between product story and technical evaluation. It connects the outside-in promise of Aionis with the exact route families that a serious developer would eventually inspect anyway.
+
+## Fastest way to try it
+
+The shortest path is operational, not theoretical.
+
+Start Aionis Lite, install the adapter, point the adapter at Lite, run one OpenClaw task with strict tool blocking enabled, then inspect the resulting context, decisions, feedback, and handoff behavior. The point of the demo is not just that the task runs. The point is that you can see Aionis shaping the loop before and after tool execution.
+
+What you should be looking for is not just “did the task finish.” You should be looking for whether the run became more governable. Did the runtime get better context? Did tool selection become more explicit? Did feedback and write surfaces preserve the result? Did replay or handoff give the system a better exit than simply trying again?
+
+The adapter repo already documents that path:
+
+1. [Install and Config Guide](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-install-and-config.md)
+2. [OpenClaw example config](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/examples/openclaw.json)
+
+## When to read this page instead of Proof
+
+Use this page when you want the runtime integration shape, the exact Aionis surface touched by the adapter, and the shortest serious demo path you can try next. Use [Proof](/proof) when your question is still, "Is there enough public evidence here to justify deeper evaluation at all?"
+
+## The right public framing
+
+This demo should be positioned as:
+
+1. execution control for OpenClaw
+2. policy, replay, and handoff around tool use
+3. a real runtime case where Aionis reduces churn and improves completion on current slices
+
+It should not be positioned as:
+
+1. proof that Aionis solves every agent failure mode
+2. proof of universal token wins on every model
+3. planner-internal reasoning control
+
+That narrower framing is exactly why this demo is so useful. It is strong, concrete, and defensible.
+
+If you finish this page and still want the shortest external proof path, go back to [Proof](/proof). If you are already convinced and want to touch the product yourself, the next practical step is [Quickstart](/how/quickstart).
+
+## Choose this page when
+
+Use this page when you want the strongest runtime-shaped demo instead of a bare HTTP example. If your question is still “is there enough public proof at all?”, start with [Proof](/proof).

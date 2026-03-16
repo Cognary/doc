@@ -1,0 +1,101 @@
+---
+title: "POST /v1/memory/replay/playbooks/dispatch"
+description: "Reference for dispatching an Aionis replay playbook into deterministic, fallback, or candidate-only execution paths."
+---
+
+# POST /v1/memory/replay/playbooks/dispatch
+
+## Status
+
+`code-backed`
+
+## What it does
+
+Chooses between:
+
+1. deterministic replay now
+2. fallback replay now
+3. candidate-only inspection
+
+This is the policy-and-execute surface that sits one step above `playbooks/candidate`.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/dispatch" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_replay",
+    "playbook_id":"playbook_001",
+    "fallback_mode":"guided",
+    "execute_fallback":true
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `playbook_id`
+4. optional `version`
+5. optional `deterministic_gate`
+6. `fallback_mode`
+7. `execute_fallback`
+8. `params`
+9. `max_steps`
+
+## Response fields to read first
+
+1. `dispatch.decision`
+2. `dispatch.primary_inference_skipped`
+3. `dispatch.fallback_executed`
+4. `candidate`
+5. `replay`
+6. `cost_signals`
+
+## Example response
+
+```json
+{
+  "dispatch": {
+    "decision": "fallback_execute",
+    "primary_inference_skipped": false,
+    "fallback_executed": true
+  },
+  "candidate": {
+    "eligible_for_deterministic_replay": false
+  },
+  "replay": {
+    "mode": "guided"
+  }
+}
+```
+
+## Important boundary
+
+This endpoint goes further than `playbooks/candidate` because it can execute replay, but it is not a blanket deterministic guarantee.
+
+The grounded claim is narrower:
+
+1. Aionis can inspect deterministic eligibility
+2. skip primary inference when conditions match
+3. fall back explicitly when they do not
+
+## Error codes
+
+Common errors:
+
+1. `replay_playbook_not_found` or `replay_playbook_version_not_found`
+2. `replay_read_not_supported_in_embedded`
+3. `replay_strict_async_not_supported`
+4. `replay_executor_not_enabled` or `replay_sandbox_executor_not_enabled`
+5. `replay_local_exec_consent_required`
+6. `replay_allowed_commands_empty`
+7. `replay_guided_repair_strategy_not_allowed`
+
+If you need the pre-execution eligibility view, use [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate). If you need the direct execution path, use [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run).
+
+## Choose this route when
+
+Use `dispatch` when you want Aionis to decide whether to take deterministic replay, fallback replay, or candidate-only handling. If you only want the eligibility check, use `candidate`. If you already know the exact execution mode, use `playbooks/run`.

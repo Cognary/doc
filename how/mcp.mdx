@@ -1,0 +1,73 @@
+---
+title: "MCP"
+description: "Use the Aionis MCP surfaces for memory, policy, replay, and coding-agent workflows with a protocol-native integration path."
+---
+
+# MCP
+
+MCP is the easiest integration story when the client already speaks the protocol.
+
+## Two MCP surfaces
+
+The repository currently exposes:
+
+1. `aionis-mcp`
+2. `aionis-dev-mcp`
+
+## Quick start
+
+```bash
+npm run build
+```
+
+Run compatibility MCP:
+
+```bash
+AIONIS_BASE_URL=http://localhost:3001 \
+AIONIS_SCOPE=default \
+node dist/mcp/aionis-mcp.js
+```
+
+That example assumes repository Lite on port `3001`.
+
+If you launched Aionis with the published SDK CLI instead, use `http://127.0.0.1:3321`.
+
+## When MCP is the right choice
+
+Use MCP when:
+
+1. the host already understands MCP and you do not want a custom client wrapper first
+2. memory, policy, and replay should appear as protocol-native tools
+3. you want the integration boundary to stay outside the host runtime
+
+`aionis-dev-mcp` is the better fit when the host is a coding agent.
+
+`aionis-mcp` is the better fit when you want the narrower compatibility surface first.
+
+## What MCP buys you
+
+MCP matters when you want Aionis to feel like infrastructure the host can call, not a custom client your app has to embed first.
+
+That gives you three practical benefits:
+
+1. the host sees memory, policy, and replay as tool surfaces it already understands
+2. you keep the integration boundary clean instead of mixing Aionis client logic into the host runtime
+3. you can test continuity behavior at the protocol boundary where many agent systems actually fail
+
+This is why MCP is especially useful for coding agents and host tools that already center their runtime around protocol-native capabilities.
+
+## What to prove first
+
+Do not start by exposing every Aionis surface through MCP.
+
+Start by proving one narrow loop:
+
+1. write or recover continuity
+2. assemble the next-step context
+3. make one governed decision if needed
+
+If that loop is stable, then expand the surface. If it is not stable, adding more MCP tools only makes the integration noisier.
+
+## Choose this page when
+
+Use this page when the host already speaks MCP and you want Aionis to appear as protocol-native tooling. If you want a local coding proof first, read [Codex](/how/codex). If you want a graph-runtime entry point, read [LangGraph](/how/langgraph).

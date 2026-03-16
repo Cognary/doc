@@ -1,0 +1,96 @@
+---
+title: "Complete Flow"
+description: "Follow one realistic Aionis loop from write to planning, decision, and feedback using current repository surfaces."
+---
+
+# Complete Flow
+
+This is the shortest realistic Aionis loop for a developer who wants more than a health check.
+
+Work enters Aionis once, then stays inspectable and reusable across the next planning and execution step.
+
+## What this flow covers
+
+This example uses real surfaces that exist in the current repository:
+
+1. `memory/write`
+2. `planning/context`
+3. `tools/select`
+4. `tools/decision`
+5. `tools/feedback`
+
+That gives you one complete loop:
+
+1. write execution facts
+2. assemble planner-facing context
+3. persist a governed tool decision
+4. inspect that decision by `decision_id`
+5. record outcome feedback for later adaptation
+
+## Where the execution kernel starts to show up
+
+This page is still the shortest product loop, but the current repository already exposes the first kernel-level surfaces behind it.
+
+When continuity state is present, watch for these fields:
+
+1. `memory/write`
+   - optional `execution_state_v1`
+   - optional `execution_transition_v1`
+2. `planning/context` and `context/assemble`
+   - `execution_kernel.packet_source_mode`
+   - `execution_kernel.state_first_assembly`
+3. `tools/select`
+   - `execution_kernel.control_profile_origin`
+   - `execution_kernel.current_stage`
+   - `execution_kernel.active_role`
+4. `handoff/store` and `handoff/recover`
+   - `execution_state_v1`
+   - `execution_packet_v1`
+   - `control_profile_v1`
+
+That is the current additive kernel path:
+
+1. persist continuity state
+2. assemble packet-shaped context from state
+3. let profile data shape tool selection
+4. keep the same public route family
+
+You do not need to start with these fields on day one, but they are now the shortest way to understand how Aionis is moving from memory continuity toward execution continuity.
+
+## TypeScript SDK example
+
+```ts
+import { AionisClient } from "@aionis/sdk";
+
+const client = new AionisClient({
+  base_url: "http://localhost:3001",
+});
+
+const scope = "docs_v4_verified";
+const tenant_id = "default";
+const run_id = "docs_v4_complete_flow_001";
+```
+
+Use `3001` if you started Lite with `npm run start:lite`.
+
+Use `3321` if you started Lite with `npx @aionis/sdk dev`.
+
+Use the verified endpoint pages when you want the exact request and response details.
+
+## What to look for
+
+Focus on these compact surfaces:
+
+1. `planning_summary`
+2. persisted `decision_id`
+3. `decision_uri`
+4. `lifecycle_summary`
+5. `updated_rules`
+6. `execution_kernel.packet_source_mode`
+7. `execution_kernel.control_profile_origin`
+
+Those are the shortest path to understanding whether Aionis is carrying execution state forward.
+
+## Choose this page when
+
+Use this page when `Quickstart` is too small and you want one realistic loop that persists state, decision, and feedback. If you need exact field-level behavior after this walkthrough, go to [Endpoint Reference](/reference/endpoints).

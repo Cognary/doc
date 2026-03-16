@@ -1,0 +1,85 @@
+---
+title: "Codex"
+description: "Use Aionis with Codex local workflows to preserve project-scoped continuity and replay-aware execution."
+---
+
+# Codex
+
+Codex is one of the fastest ways to feel Aionis value in practice.
+
+It makes the continuity problem obvious because project context, task state, and follow-up actions drift quickly across local sessions.
+
+## The simplest working path
+
+The cleanest local path is:
+
+1. run Lite
+2. use Dev MCP
+3. launch a project-scoped Codex session
+
+The repository already provides a scope-aware launcher:
+
+```bash
+cd /path/to/project
+bash /path/to/Aionis/scripts/codex-aionis-project.sh --print
+```
+
+Default behavior:
+
+1. the launcher targets `http://127.0.0.1:3101` unless you pass `--base-url` or set `AIONIS_BASE_URL`
+2. this is different from repository Lite on `3001`
+3. this is also different from the published SDK CLI default on `3321`
+
+If you already started Aionis another way, override the base URL explicitly.
+
+## Why this integration matters
+
+Codex is useful here because it makes three Aionis surfaces concrete:
+
+1. scoped memory across repeated local work
+2. handoff between interrupted and resumed sessions
+3. replay and policy once the workflow becomes more structured
+
+## Why Codex is such a strong first proof
+
+Codex exposes the exact failure mode Aionis is built to address.
+
+Local coding sessions restart constantly:
+
+1. the repo is large
+2. the task drifts over time
+3. the next session rarely inherits the right execution facts cleanly
+
+That makes it a better proof surface than a toy chat demo.
+
+If Aionis helps a Codex workflow:
+
+1. resume without rediscovery
+2. recover structured handoff
+3. keep the next step bounded and inspectable
+
+then the value is real.
+
+## What to check in the first session
+
+The first Codex trial does not need replay, automation, or a giant policy setup.
+
+It should answer simpler questions:
+
+1. after one scoped session, can the next session recover the right context
+2. does the handoff preserve target files, next action, and acceptance checks
+3. do the IDs you need for later inspection stay visible
+
+If that first loop works, you have already proven the thing that matters most on the Codex path.
+
+## Best next step after launch
+
+After the first scoped Codex session works:
+
+1. verify `write -> recall_text`
+2. add handoff for interrupted work
+3. inspect replay and policy only after the first continuity loop is stable
+
+## Choose this page when
+
+Use this page when your first serious proof surface is a local coding workflow. If you want the lower-level protocol path, read [MCP](/how/mcp). If you want the current applied demo with stronger runtime evidence, read [OpenClaw Adapter](/how/openclaw-adapter).

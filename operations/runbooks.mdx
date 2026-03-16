@@ -1,0 +1,41 @@
+---
+title: "Runbooks"
+description: "Operator runbooks for core production gates, governance evidence, replay regression checks, and scope consistency."
+---
+
+# Runbooks
+
+These commands matter because operations should not depend on memory or improvisation. A runbook is useful when someone can execute the right check at the right time without having to rediscover the command shape during a release or incident.
+
+## Core production gate
+
+```bash
+npm run -s gate:core:prod -- --base-url "$BASE_URL" --scope default
+```
+
+Use this gate before rollout and after significant production changes. It is the quickest way to confirm that the core operational contract is still intact.
+
+## Weekly governance evidence
+
+```bash
+npm run -s evidence:weekly -- --scope default --window-hours 168 --strict
+```
+
+This should be treated as a discipline, not a compliance afterthought. Weekly evidence routines keep governance discussions tied to real data rather than intuition.
+
+## Replay regression checks
+
+```bash
+npm run -s e2e:replay-learning-fault-smoke
+npm run -s e2e:replay-learning-retention-smoke
+```
+
+These checks are especially useful after rule, replay, or runtime-host changes. They tell you whether a fix or optimization quietly weakened the reuse path the product depends on.
+
+## Scope consistency check
+
+```bash
+npm run -s job:consistency-check:scope -- --scope default --strict-warnings
+```
+
+If you are still planning a rollout, return to [Go-live Checklist](/operations/go-live). If your next concern is control, audit, and policy boundary, go to [Governance](/reference/governance). If you need the broader operating picture around these runbooks, use [Operations](/operations/).

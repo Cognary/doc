@@ -1,0 +1,75 @@
+---
+title: "Benchmarks And SLO"
+description: "Review the public evidence, performance baselines, continuity results, and restraint rules behind Aionis external claims."
+---
+
+# Benchmarks And SLO
+
+Use this page for the broader evidence layer behind current Aionis claims.
+
+The point of this page is not to flood you with synthetic charts. It is to show what kinds of performance and continuity evidence already exist, what those numbers actually mean, and how to avoid reading more certainty into them than they justify.
+
+## Public evidence categories
+
+The current public benchmark set already supports four core claims:
+
+1. baseline write and recall performance
+2. policy-loop improvement on a documented scenario
+3. continuity and handoff quality across runtime boundaries
+4. replay reuse, including documented strict replay behavior
+
+That mix is important. Aionis is not the kind of system where raw latency alone tells the product story. A low-latency memory write is nice, but it is not what makes the product valuable. The stronger question is whether continuity survives when the session changes, whether handoff quality stays high across runtimes, and whether good execution can be reused instead of rediscovered.
+
+## Current public snapshot
+
+The current public snapshot includes:
+
+1. recall p95 `51.42 ms`
+2. write p95 `182.5 ms`
+3. `0%` recall failure rate in the disclosed profile
+4. `0%` write failure rate in the disclosed profile
+
+Those operational numbers matter because they set a floor for credibility. If the basic surfaces were already slow or unstable, the higher-level continuity story would not matter. But they are still only the floor. They tell you the product can move data quickly and reliably on the disclosed profile. They do not, by themselves, explain why a team would adopt Aionis.
+
+## Read the benchmark stack in the right order
+
+```text
+1. Snapshot latency and failure-rate numbers
+2. Continuity and handoff numbers
+3. Replay reuse disclosures
+4. Applied runtime evidence such as OpenClaw
+```
+
+## Continuity and replay evidence
+
+The strongest differentiation evidence is not raw latency.
+
+It is continuity:
+
+1. continuation A/B showed lower token usage on real continuation work
+2. cross-runtime handoff recovery improved from `33.33%` to `100%`
+3. strict replay on a real repository was documented at `0` model tokens after compile
+
+That is the part worth taking seriously. Continuity evidence changes both cost and operational trust. If a second run can continue from surviving context instead of rebuilding it, token spend drops. If a handoff artifact can actually recover work across a boundary, collaboration becomes more reliable. If replay can reuse a proven path without another model loop, the product starts acting like infrastructure instead of prompt choreography.
+
+This is why the public case for Aionis should lead with continuity quality and only then mention raw write or recall timings.
+
+## Strongest applied case today
+
+The clearest applied Aionis case today is [OpenClaw Adapter](/how/openclaw-adapter).
+
+Use [Proof](/proof) first if you want the shortest outside-in evaluation path.
+
+Why it matters:
+
+1. it exercises Aionis on a real host runtime instead of a standalone memory demo
+2. it already exposes public evidence for tool-loop churn reduction, completion uplift, replay dispatch, and handoff fallback
+3. it uses the same current Aionis surface documented in this site, including `context/assemble`, `rules/evaluate`, `tools/select`, `tools/feedback`, `handoff/store`, and replay candidate/dispatch
+
+That applied layer matters because it prevents the benchmark story from floating away from the actual product surface. OpenClaw is useful not only because it has numbers, but because it exercises the same routes a real evaluator would eventually inspect in the reference.
+
+If you are still judging whether Aionis has earned a deeper look, go back to [Proof](/proof). If you already believe the product is worth serious evaluation, the next useful stop is [Verification Status](/reference/verification-status), followed by the exact surfaces in [Endpoint Reference](/reference/endpoints).
+
+## Choose this page when
+
+Use this page when the question is “what do the public numbers actually justify?” If you only need the shortest evidence path, [Proof](/proof) is faster. If you already know what route you care about, go straight to the endpoint reference.

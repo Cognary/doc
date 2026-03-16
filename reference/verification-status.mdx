@@ -1,0 +1,111 @@
+---
+title: "Verification Status"
+description: "See which Aionis documentation surfaces are live-verified, code-backed, or supported by public benchmark evidence."
+---
+
+# Verification Status
+
+This page shows how far each part of this site has been verified.
+
+That matters because some parts of Aionis are already validated against a running Lite instance, while others are documented from current code, schemas, SDKs, and public evidence.
+
+This page exists to prevent two opposite mistakes. The first is overclaiming, where every documented surface gets treated like it was just re-run live. The second is underclaiming, where useful code-backed material gets dismissed simply because it was not part of the current fixture cycle. A good evaluation needs both kinds of truth.
+
+## Status levels
+
+`live-verified`
+: validated against a running Lite instance using the current verification scope
+
+`code-backed`
+: checked against current code, schemas, SDKs, and public material, but not yet run end-to-end in the current verification cycle
+
+`public-evidence-backed`
+: supported by current public benchmark or disclosure pages
+
+Those labels are intentionally plain. They are not marketing badges. They are meant to tell a technical reader what level of trust is appropriate for each page and example in this docs set.
+
+## Reading rule
+
+```text
+live-verified           = re-run in the current docs cycle
+code-backed             = grounded in current code and schemas
+public-evidence-backed  = supported by disclosed benchmark or case-study material
+```
+
+## Current live-verified endpoints
+
+1. `POST /v1/memory/write`
+2. `POST /v1/memory/recall_text`
+3. `POST /v1/memory/planning/context`
+4. `POST /v1/memory/context/assemble`
+5. `POST /v1/memory/rules/state`
+6. `POST /v1/memory/rules/evaluate`
+7. `POST /v1/memory/find`
+8. `POST /v1/memory/resolve`
+9. `POST /v1/memory/tools/select`
+10. `POST /v1/memory/tools/decision`
+11. `POST /v1/memory/tools/run`
+12. `POST /v1/memory/tools/feedback`
+13. `POST /v1/handoff/store`
+14. `POST /v1/handoff/recover`
+
+This list matters because it covers the core first-evaluation route family. A developer can already test write, recall, planning, assembly, policy loop surfaces, search and resolution surfaces, and handoff behavior against a running Lite cycle documented in this site.
+
+## Execution continuity kernel status
+
+The execution continuity kernel should currently be read in two layers.
+
+`code-backed`
+: `ExecutionState v1`, `ExecutionPacket v1`, `ControlProfile v1`, the internal state store, and explicit transition contract are all present in the current repository behind the existing route family
+
+`live-verified`
+: the current Lite verification set already exercises the most important visible route-level kernel effects:
+
+1. `handoff/store` returning continuity payloads and transition metadata
+2. `handoff/recover` preferring updated execution state when it exists
+3. `planning/context` reporting `execution_kernel.packet_source_mode = state_first`
+4. `context/assemble` reporting `execution_kernel.packet_source_mode = state_first`
+5. `memory/write` persisting explicit `execution_state_v1` and applying `execution_transition_v1`
+6. `tools/select` consuming continuity-delivered or state-derived control profiles
+
+What is not yet claimed here:
+
+1. that every runtime host consumes the kernel deeply
+2. that every route is already state-first by default
+3. that the kernel is already a separate public API family
+
+That boundary is important. The kernel is real and increasingly visible, but the honest claim today is still that it strengthens the existing route family rather than replacing it with a whole new external product surface.
+
+## Current replay status
+
+Replay in this site is currently documented in two evidence layers.
+
+`code-backed`
+: `POST /v1/memory/replay/runs/get`, `POST /v1/memory/replay/playbooks/get`, `POST /v1/memory/replay/playbooks/candidate`, `POST /v1/memory/replay/playbooks/dispatch`, and `POST /v1/memory/replay/playbooks/repair/review`
+
+`code-backed` and `public-evidence-backed`
+: `POST /v1/memory/replay/playbooks/compile_from_run` and `POST /v1/memory/replay/playbooks/run`
+
+Replay is not yet part of the current `live-verified` Lite scope.
+
+That means replay pages are usable for architecture and integration planning, but they should not be treated as fully re-run verified examples in this validation cycle.
+
+This is a good example of why this page exists. Replay is not vapor. It is code-backed, partly public-evidence-backed, and important to the product story. It is simply not in the current re-run fixture set, so readers should treat it with the right level of confidence.
+
+## Applied demo status
+
+[OpenClaw Adapter](/how/openclaw-adapter) should currently be read in two layers:
+
+`code-backed`
+: the adapter maps onto current Aionis endpoint surfaces that exist in this repository today
+
+`public-evidence-backed`
+: the adapter repo already publishes benchmark summaries, case studies, and evidence artifacts for completion uplift, step reduction, replay, and handoff behavior
+
+That makes it the strongest applied Aionis demo today, even though it is not part of the current `live-verified` docs fixture cycle.
+
+This page is here to stop overclaiming, not to slow down evaluation. If you want the shortest evidence path next, go to [Proof](/proof). If you are already deciding on actual integration work, move directly to [Endpoint Reference](/reference/endpoints) or the broader [API Reference](/api-reference/).
+
+## Choose this page when
+
+Use this page when you need to know how much trust to place in a given docs page or example. It is the right page for evidence boundaries, not for first product understanding.

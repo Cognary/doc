@@ -1,0 +1,45 @@
+---
+title: "POST /v1/memory/replay/run/start"
+description: "Start low-level replay run capture for workflows that record replay state step by step."
+---
+
+# POST /v1/memory/replay/run/start
+
+Use this endpoint when a host runtime explicitly records replay lifecycle state from the beginning of a run.
+
+## What it is for
+
+1. replay run capture start
+2. low-level runtime instrumentation
+3. explicit replay state recording
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/run/start" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_replay",
+    "run_id":"replay_run_001",
+    "task_key":"customer_follow_up"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "ok": true,
+  "run_id": "replay_run_001",
+  "status": "started"
+}
+```
+
+## Important boundary
+
+This is the low-level instrumentation path. Most teams should start with replay playbooks and candidate selection before dropping to step-by-step capture.
+
+## Choose this route when
+
+Use `run/start` only when the host runtime is instrumenting replay step by step. If you already have a replay playbook, the higher-level `playbooks/run` path is usually what you want.

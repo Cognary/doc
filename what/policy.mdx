@@ -1,0 +1,80 @@
+---
+title: "Policy"
+description: "See how Aionis makes routing, tool choice, and adaptation inspectable under explicit policy and feedback."
+---
+
+# Policy
+
+Policy is the part of Aionis that makes memory governable.
+
+## The product meaning of policy
+
+Memory by itself can influence prompts.
+
+Policy lets memory influence action selection in a way that teams can inspect.
+
+That is the difference between:
+
+1. informal runtime behavior
+2. controlled runtime behavior
+
+## What this enables
+
+With policy, Aionis can support:
+
+1. rule evaluation against runtime context
+2. constrained tool selection
+3. decision provenance
+4. feedback-linked adaptation
+
+## Smallest route map
+
+```text
+rules/evaluate   -> inspect policy against context
+tools/select     -> choose and persist governed action
+tools/run        -> inspect run lifecycle
+tools/feedback   -> feed outcome back into policy state
+rules/state      -> move rule through lifecycle
+```
+
+## Why policy changes the category of the product
+
+Without policy, an agent stack may still be useful, but it is hard to govern.
+
+The runtime can choose tools, branch into risky actions, and adapt over time, but those changes remain hard to inspect after the fact. Teams then discover that “memory helped” is not the same thing as “execution was controlled.”
+
+Policy is the part of Aionis that narrows that gap.
+
+It gives you a loop:
+
+1. evaluate the current context
+2. shape the candidate action set
+3. persist the decision
+4. inspect the run later
+5. feed outcome back into the system
+
+That loop matters because it turns runtime behavior into something operators can review and improve without relying on prompt archaeology.
+
+## What to evaluate first
+
+The fastest useful policy evaluation is not a giant rules system.
+
+It is one risky boundary:
+
+1. one tool choice
+2. one run-level decision record
+3. one feedback path after outcome
+
+If that one boundary becomes inspectable, you already know whether Aionis policy is adding real control or just more documentation around runtime behavior.
+
+## Continue from product to proof
+
+1. [Policy Guide](/how/policy)
+2. [Policy API Reference](/api-reference/policy)
+3. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
+4. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
+5. [OpenClaw Adapter](/how/openclaw-adapter)
+
+## Choose this page when
+
+Use this page when the pain is opaque routing or tool choice. If you want to prove one governed boundary directly, go to the policy guide next.

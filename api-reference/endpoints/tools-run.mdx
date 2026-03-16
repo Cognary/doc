@@ -1,0 +1,80 @@
+---
+title: "POST /v1/memory/tools/run"
+description: "Reference for inspecting the run-level lifecycle of governed tool selection in Aionis, including linked decisions and feedback."
+---
+
+# POST /v1/memory/tools/run
+
+## What it does
+
+Returns the lifecycle view of one governed tool-selection run.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/tools/run" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "run_id":"run_001",
+    "include_feedback":true
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `run_id`
+4. `decision_limit`
+5. `include_feedback`
+6. `feedback_limit`
+
+## Response fields that matter first
+
+1. `lifecycle_summary.status`
+2. `lifecycle_summary.decision_count`
+3. `lifecycle_summary.feedback_total`
+4. `decisions`
+5. `feedback`
+
+## Example response
+
+```json
+{
+  "lifecycle_summary": {
+    "status": "completed",
+    "decision_count": 1,
+    "feedback_total": 1
+  },
+  "decisions": [
+    {
+      "decision_id": "decision_001",
+      "selected_tool": "ticket_router"
+    }
+  ],
+  "feedback": [
+    {
+      "outcome": "success",
+      "updated_rules": 1
+    }
+  ]
+}
+```
+
+## Why this matters for continuity
+
+`tools/run` is the run-level inspection surface for the policy loop.
+
+Use it when you need to see one connected path instead of isolated records:
+
+1. selection decisions
+2. linked feedback
+3. run-level lifecycle status
+
+If `tools/select` gives you the governed choice, `tools/run` shows the whole continuity chain around that choice.
+
+## Choose this route when
+
+Use `tools/run` when you need the joined lifecycle for one execution attempt: decisions, feedback, and run status together. If you only need the selected tool record, `tools/decision` is narrower and faster to inspect.

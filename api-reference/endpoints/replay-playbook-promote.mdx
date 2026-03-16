@@ -1,0 +1,47 @@
+---
+title: "POST /v1/memory/replay/playbooks/promote"
+description: "Promote a replay playbook version under explicit replay lifecycle control."
+---
+
+# POST /v1/memory/replay/playbooks/promote
+
+Use this endpoint when a replay playbook moves from candidate or draft state into a promoted state.
+
+## What it is for
+
+1. replay lifecycle governance
+2. explicit playbook promotion
+3. controlled reuse-state changes
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/promote" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_replay",
+    "playbook_id":"playbook_001",
+    "version":1,
+    "target_status":"active"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "playbook_id": "playbook_001",
+  "version": 1,
+  "status": "active",
+  "commit_uri": "memory://commit/commit_004"
+}
+```
+
+## Important boundary
+
+Promotion changes lifecycle state. It does not prove the playbook is safe by itself. Use review and candidate checks before promotion.
+
+## Choose this route when
+
+Use `playbooks/promote` when a reviewed replay asset is ready to move into a stronger lifecycle state. If you still need review or validation, stay on the repair-review path first.

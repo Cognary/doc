@@ -1,0 +1,89 @@
+---
+title: "Handoff Guide"
+description: "Use Aionis handoff APIs to store and recover structured continuity artifacts across sessions and runtimes."
+---
+
+# Handoff
+
+Handoff is where Aionis becomes obviously more than a retrieval layer.
+
+Most systems treat handoff as text.
+
+Aionis treats handoff as a structured continuity artifact.
+
+## What is live in code today
+
+The handoff surface is implemented as:
+
+1. `POST /v1/handoff/store`
+2. `POST /v1/handoff/recover`
+
+## Smallest useful proof
+
+```bash
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff",
+    "anchor":"task_001",
+    "handoff_kind":"task_handoff",
+    "summary":"Continue invoice follow-up",
+    "handoff_text":"Draft the customer reply and keep rollback notes intact."
+  }' | jq
+
+curl -sS "$BASE_URL/v1/handoff/recover" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff",
+    "anchor":"task_001",
+    "handoff_kind":"task_handoff"
+  }' | jq
+```
+
+## What a serious handoff flow looks like
+
+A useful handoff flow should not start at the moment you need recovery.
+
+It starts when the current runtime still knows:
+
+1. what changed
+2. what still matters
+3. what must be validated next
+4. what should not be broken while continuing
+
+That is why `handoff/store` matters as much as `handoff/recover`.
+
+Store the continuity artifact while the current step still has the right execution facts. Recover it later when a new session, another agent, or a human reviewer needs to continue from the same anchor.
+
+## What to verify first
+
+The shortest useful handoff test is:
+
+1. store a structured handoff for one real task anchor
+2. recover it from a fresh context
+3. check whether the next actor can continue without reconstructing the task from scratch
+
+The quality check is not “does the recovered text sound nice?”
+
+It is:
+
+1. are the right target files still visible
+2. are the right acceptance checks still present
+3. are the risk and rollback notes still intact
+4. can the next step act without rediscovery
+
+If the answer is yes, handoff is doing real work instead of acting like summary storage.
+
+## Best first use cases
+
+Start handoff with one of these:
+
+1. planner to executor transition
+2. session end to next session start
+3. human review back into agent follow-up
+
+## Choose this guide when
+
+Use this page when the problem is not just remembering prior work but resuming it across a boundary: another session, another agent, or another role.

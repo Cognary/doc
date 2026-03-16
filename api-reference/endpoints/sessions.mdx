@@ -1,0 +1,60 @@
+---
+title: "Sessions"
+description: "Create a memory session boundary for session-graph and continuity-aware event logging."
+---
+
+# POST /v1/memory/sessions
+
+Use this endpoint to create an explicit session object when your integration needs session-graph features instead of loose standalone writes.
+
+## What it is for
+
+1. creating a durable session boundary
+2. attaching later events to a known session
+3. enabling session-graph style continuity workflows
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sessions" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sessions",
+    "session_id":"session_001",
+    "session_kind":"task_session",
+    "summary":"Customer follow-up workflow"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. session identity fields for the host runtime
+
+## Response fields that matter first
+
+1. `request_id`
+2. `session_id`
+3. `session_uri` if returned by the current store path
+
+## Example response
+
+```json
+{
+  "request_id": "req_sessions_001",
+  "tenant_id": "default",
+  "scope": "docs_sessions",
+  "session_id": "session_001",
+  "session_uri": "memory://session/session_001"
+}
+```
+
+## Important boundary
+
+This route depends on the `sessions_graph` capability. If the store does not support it, treat that as a feature boundary, not an incidental error.
+
+## Choose this route when
+
+Use `sessions` when your integration needs a session boundary before appending structured events. If you do not need session-graph behavior, `memory/write` is the simpler starting point.

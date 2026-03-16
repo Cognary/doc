@@ -1,0 +1,63 @@
+---
+title: "POST /v1/memory/rules/state"
+description: "Reference for moving Aionis rule nodes through draft, shadow, active, and disabled lifecycle states."
+---
+
+# POST /v1/memory/rules/state
+
+## What it does
+
+Moves one persisted rule node between lifecycle states such as:
+
+1. `draft`
+2. `shadow`
+3. `active`
+4. `disabled`
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/rules/state" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "rule_node_id":"rule_001",
+    "state":"active",
+    "input_text":"promote router preference rule after review"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `rule_node_id`
+4. `state`
+5. `input_text` or `input_sha256`
+
+## Response fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `commit_id`
+4. `commit_hash`
+
+## Example response
+
+```json
+{
+  "tenant_id": "default",
+  "scope": "docs_policy",
+  "commit_id": "commit_001",
+  "commit_hash": "sha256:rule_state_commit"
+}
+```
+
+## Important boundary
+
+This route changes rule lifecycle state. It does not evaluate the rule and it does not prove the rule should be promoted. Use `rules/evaluate` to inspect behavior first, then use `rules/state` to move the rule through review stages.
+
+## Choose this route when
+
+Use `rules/state` when governance is moving a rule between draft, shadow, active, and disabled. If you are still asking what the rule would do, use `rules/evaluate`.

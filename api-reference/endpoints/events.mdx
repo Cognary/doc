@@ -1,0 +1,61 @@
+---
+title: "Events"
+description: "Append session-scoped events into the memory session graph for later continuity, find, and investigation flows."
+---
+
+# POST /v1/memory/events
+
+Use this endpoint to append an event to a previously created session when you need structured session history instead of isolated writes.
+
+## What it is for
+
+1. adding events to a session graph
+2. preserving ordered session history
+3. supporting later inspection and continuity flows
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/events" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sessions",
+    "session_id":"session_001",
+    "event_type":"tool_result",
+    "text_summary":"Router selected ticket_router for customer follow-up"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `session_id`
+4. event payload and text summary
+
+## Response fields that matter first
+
+1. `request_id`
+2. `session_id`
+3. created event identifiers
+
+## Example response
+
+```json
+{
+  "request_id": "req_events_001",
+  "tenant_id": "default",
+  "scope": "docs_sessions",
+  "session_id": "session_001",
+  "event_id": "event_001"
+}
+```
+
+## Important boundary
+
+If your product question is only “can Aionis remember useful work,” start with `memory/write` first. Use sessions and events when you specifically need session-graph semantics.
+
+## Choose this route when
+
+Use `events` when you already created a session and need ordered session history inside that session boundary. If you only need durable memory without session-graph structure, use `memory/write`.

@@ -1,0 +1,51 @@
+---
+title: "FAQ"
+description: "Quick answers to the most common Aionis evaluation and integration questions."
+---
+
+# FAQ
+
+## Fast answers
+
+```text
+weak recall after write   -> missing nodes or embedding path not set
+need minimum trace ids    -> request_id, run_id, decision_id, commit_uri
+want first evaluation     -> write -> recall_text -> handoff
+want replay trust boundary-> verification-status
+```
+
+## Why does write succeed but recall return weak context?
+
+Most often `nodes` were missing in write payload or embedding configuration is not set for semantic retrieval.
+
+## Which fields should I always log?
+
+`request_id`, `run_id`, `decision_id`, and `commit_uri`.
+
+## Can I use Aionis without policy loop?
+
+Yes. Start with memory APIs, then add policy APIs when execution governance is needed.
+
+## Is sandbox production-ready?
+
+Sandbox APIs are experimental. Gate usage with strict policy and isolated execution settings.
+
+## Where should I start if production errors spike?
+
+Run core gate, check request-level error patterns, then replay a failing chain end-to-end.
+
+## What should I evaluate first if I only have one session?
+
+Run one `write -> recall_text -> handoff` path, then inspect the returned IDs and verification status.
+
+## Is replay fully live-verified in this site?
+
+Not yet.
+
+Replay pages in the current site are primarily `code-backed`, and some are also `public-evidence-backed`.
+
+Use [Verification Status](/reference/verification-status) for the current boundary.
+
+## Choose this page when
+
+Use this page when you need quick triage answers before diving deeper. If the question becomes operational or contractual, move to the deeper reference pages.

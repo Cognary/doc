@@ -1,0 +1,52 @@
+---
+title: "Security"
+description: "Baseline security posture for Aionis deployments, including auth, CORS, operator controls, and incident-readiness."
+---
+
+# Security
+
+Security in Aionis starts with an unglamorous rule: do not evaluate convenience settings as if they were production defaults.
+
+## Baseline controls
+
+1. Never deploy production with `MEMORY_AUTH_MODE=off`.
+2. Use least-privilege credentials per environment.
+3. Protect admin routes with dedicated admin credentials.
+4. Restrict CORS to explicit trusted origins.
+5. Rotate keys and tokens on schedule or incident.
+
+## Minimum production posture
+
+```text
+auth on
+explicit tenant/scope
+dedicated admin credentials
+restricted CORS
+durable request/decision/commit IDs in logs
+```
+
+## Operational checks
+
+1. Confirm auth mode before each release.
+2. Confirm dangerous operation switches remain default-safe.
+3. Audit random sample of sensitive actions weekly.
+
+## Incident response readiness
+
+1. Keep request/decision/replay IDs in logs.
+2. Keep credential rotation runbook documented and tested.
+3. Preserve release artifacts for forensic analysis.
+
+## The external reading rule
+
+If you are deciding whether the product is safe enough to trial, focus on these questions first:
+
+1. can auth and tenant isolation be enforced cleanly
+2. are dangerous execution paths default-off
+3. can incidents be reconstructed with durable IDs
+
+If the answer is still unclear after this page, move straight to [Authentication](/api-reference/authentication) and [Production Operations](/reference/production-ops) instead of staying in summary material.
+
+## Choose this page when
+
+Use this page when the question is “is the deployment posture sane enough to trial or ship?” If you need header-level auth detail, go to Authentication. If you need rollout posture, go to Production Operations.

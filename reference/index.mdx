@@ -1,0 +1,96 @@
+---
+title: "Reference"
+description: "Deep reference for verification status, endpoint surfaces, API contract, and operations."
+---
+
+# Reference
+
+This is the deep layer for teams that need to decide whether Aionis is credible enough to integrate and operate.
+
+This section should not be the first thing a new reader sees.
+
+It becomes useful when someone asks harder questions:
+
+1. which parts are actually verified
+2. which endpoint surfaces are stable enough to wire
+3. what identifiers must be logged
+4. what the operational and governance boundary really is
+
+That is a different mode of reading from the first three layers. Earlier pages are there to help you understand the product and get a first win. This section is here to remove ambiguity once the conversation becomes operational: what exactly is stable, what exactly was verified, and what exactly a team would need to log, monitor, and defend in production.
+
+## Start here if you are integrating this week
+
+Start with [Verification Status](/reference/verification-status), because it tells you which parts of this site were re-run and which are still code-backed. Then go to [Endpoint Reference](/reference/endpoints) for the surfaces your first integration will actually touch, use [API Reference](/api-reference/) when you need the broader family view, and only then go deeper into [Operations](/operations/) if you are already thinking about production rollout.
+
+## One practical integration order
+
+```text
+1. Verification Status
+2. API Contract
+3. The exact endpoint pages your first flow touches
+4. Operations only when rollout is real
+```
+
+If you are still evaluating whether Aionis is credible enough to integrate:
+
+1. [Proof](/proof)
+2. [OpenClaw Adapter](/how/openclaw-adapter)
+
+That split matters. A lot of developer products feel overwhelming because they flatten evaluation and implementation into one pile of pages. This section should not do that. If you are still deciding whether Aionis is worth attention, reference is too deep. If you are already mapping exact surfaces and obligations, reference is where the useful answers start.
+
+## How to use this section well
+
+The biggest mistake in Aionis reference reading is treating every page as equally important on day one.
+
+A better order is:
+
+1. check [Verification Status](/reference/verification-status) so you know what is live-verified and what is only code-backed
+2. read [API Contract](/reference/api-contract) so you understand the durable identifiers and route families
+3. move into [Endpoint Reference](/reference/endpoints) only for the surfaces your first integration actually touches
+4. read operations and governance only after the basic product path is already credible
+
+That order keeps the reference useful instead of turning it into noise.
+
+That is also why some pages here are narrower than people expect. A good reference page should answer one class of question clearly, not try to impersonate the whole product. The job of this section is precision, not persuasion.
+
+## What lives here
+
+1. verification boundaries
+2. endpoint-level reference
+3. deeper API reference
+4. production operations and runbooks
+5. security posture and quick answers for technical evaluators
+
+In practice, most teams will spend their first serious hour in only three places: verification status, the exact endpoints they plan to call, and the production boundary around those calls. Very few teams need the entire reference surface at once, and treating it that way usually creates the feeling that the docs are bigger than the product.
+
+## Useful supporting pages
+
+1. [FAQ](/reference/faq)
+2. [Security](/reference/security)
+3. [Benchmarks And SLO](/reference/benchmarks-and-slo)
+
+## Strongest applied proof
+
+If you need one page that shows why these reference surfaces matter in a real runtime, use [OpenClaw Adapter](/how/openclaw-adapter).
+
+It is the clearest public bridge from:
+
+1. endpoint contract
+2. policy control
+3. replay routing
+4. handoff fallback
+5. benchmark evidence
+
+That is useful because it gives the reference layer a concrete anchor. The pages here are not theoretical abstractions. They are the surfaces that show up in a real runtime case which already has public evidence behind it.
+
+## What this section is not for
+
+This section is not the best place to decide whether Aionis is interesting.
+
+Use it when you already believe the product might matter and now need to answer more technical questions about trust, boundary, and integration discipline.
+
+If you are ready to keep going, the most useful next stop is usually [Verification Status](/reference/verification-status). It keeps the rest of this section grounded by showing which claims are re-run in the current cycle and which are still code-backed.
+
+## Choose this page when
+
+Use this page when you are already past product evaluation and now need precision: trust boundaries, identifiers, endpoint contracts, and operational obligations.

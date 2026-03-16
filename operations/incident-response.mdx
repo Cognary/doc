@@ -1,0 +1,58 @@
+---
+title: "Incident Response And Replay"
+description: "Use Aionis IDs and replay surfaces to reconstruct failures, verify mitigations, and preserve incident evidence."
+---
+
+# Incident Response and Replay
+
+This page is about making failures legible. Aionis is most useful in an incident when the run can be reconstructed, the decision chain can be explained, and the proposed fix can be challenged against the same path instead of against a vague memory of what happened.
+
+## Incident workflow
+
+1. Capture failing `request_id` from client and server logs.
+2. Resolve `run_id`, `decision_id`, and `commit_uri` chain.
+3. Reconstruct execution path with replay APIs.
+4. Apply mitigation.
+5. Re-run replay to verify fix.
+
+That workflow matters because it turns incident response from narrative to evidence. The moment you can move from a request ID to a run, from a run to a decision, and from a decision to a replayable chain, you can start proving whether a fix actually addresses the same failure that triggered the incident.
+
+## Evidence package
+
+1. Timeline of key events.
+2. Request/decision payload snapshots.
+3. Replay before/after comparison.
+4. Mitigation and rollback notes.
+
+Good incident packages are boring in the best way. They reduce disagreement later because they preserve what happened, what changed, and how the team knows the change helped.
+
+## Example: replay-based fix validation
+
+Scenario:
+1. A support workflow selected `email_sender` instead of `ticket_router` after a rule update.
+
+Validation steps:
+1. Pull original IDs: `request_id`, `run_id`, `decision_id`, `commit_uri`.
+2. Replay original chain and confirm wrong selection is reproducible.
+3. Apply rule fix.
+4. Replay same workflow and verify selected tool changed to expected target.
+
+Expected comparison:
+
+| Check | Before fix | After fix |
+| --- | --- | --- |
+| selected tool | `email_sender` | `ticket_router` |
+| decision_id | old chain | new chain |
+| status | failed expectation | pass |
+
+That kind of before-and-after comparison is the real value of replay in incident work. It is not just a debugging convenience. It is a way to verify that the system now behaves differently under the same meaningful conditions.
+
+## Fast command
+
+```bash
+curl -sS "$BASE_URL/v1/memory/resolve" \
+  -H 'content-type: application/json' \
+  -d "{\"tenant_id\":\"default\",\"scope\":\"default\",\"uri\":\"$COMMIT_URI\"}" | jq
+```
+
+If your next question is about the replay contract itself, use [Replay APIs](/api-reference/replay). If you need exact endpoint shapes while triaging, go to [Endpoint Reference](/reference/endpoints). If you need the repeatable commands around these flows, use [Runbooks](/operations/runbooks).

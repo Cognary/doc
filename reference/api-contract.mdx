@@ -1,0 +1,91 @@
+---
+title: "API Contract"
+description: "Understand the Aionis external contract through endpoint groups, durable identifiers, edition boundaries, and typed failures."
+---
+
+# API Contract
+
+Use this page to judge whether the current Aionis surface is stable enough to integrate, log, and operate.
+
+## Contract principles
+
+The current repository already shows four contract choices that matter externally:
+
+1. request and response DTOs are explicit and typed
+2. responses are bounded by default instead of returning unlimited debug payloads
+3. replay and policy flows expose durable identifiers such as `request_id`, `run_id`, `decision_id`, and `commit_uri`
+4. capability differences are surfaced deliberately instead of hidden behind vague runtime errors
+
+## Minimal tracing shape
+
+If you are integrating Aionis into a runtime, the smallest useful trace to persist looks like this:
+
+```json
+{
+  "request_id": "req_001",
+  "tenant_id": "default",
+  "scope": "support",
+  "run_id": "run_001",
+  "decision_id": "decision_001",
+  "commit_uri": "memory://commit/commit_001"
+}
+```
+
+Without that set, post-run debugging gets much weaker very quickly.
+
+## Core endpoint groups
+
+The public surface is easiest to understand in five groups:
+
+1. memory: `write`, `recall`, `recall_text`, `find`, `resolve`
+2. context: `planning/context`, `context/assemble`
+3. handoff: `handoff/store`, `handoff/recover`
+4. policy: `rules/evaluate`, `tools/select`, `tools/decision`, `tools/run`, `tools/feedback`
+5. replay: run lifecycle plus replay playbooks such as `compile_from_run`, `run`, `repair`, `repair/review`, and `dispatch`
+
+## Execution continuity kernel contract
+
+The current repository also has a kernel contract behind those endpoint groups.
+
+It is not a new public API family. It is the internal continuity model that the existing routes are starting to carry:
+
+1. `ExecutionState v1`
+2. `ExecutionPacket v1`
+3. `ControlProfile v1`
+
+The practical meaning is:
+
+1. `ExecutionState v1`
+   - durable statement of task stage, role, validations, blockers, rollback notes, and resume anchor
+2. `ExecutionPacket v1`
+   - compact delivery object assembled from state for the next step
+3. `ControlProfile v1`
+   - bounded execution policy for how the runtime is allowed to continue
+
+Today this kernel shows up through the existing route family:
+
+1. `memory/write`
+   - can accept `execution_state_v1` and `execution_transition_v1`
+2. `handoff/store` and `handoff/recover`
+   - can carry `execution_state_v1`, `execution_packet_v1`, and `control_profile_v1`
+3. `planning/context` and `context/assemble`
+   - report whether packet assembly was `state_first`
+4. `tools/select`
+   - reports whether the control profile came from continuity payload or was derived from execution state
+
+That is the current contract line to watch if you care about execution continuity instead of plain memory persistence.
+
+## The IDs you should actually persist
+
+If you only keep one set of tracing fields, keep these:
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. `run_id`
+5. `decision_id` or `decision_uri`
+6. `commit_id` or `commit_uri`
+
+## Choose this page when
+
+Use this page when your question is “what identifiers and route families should I build around?” If your question is “what exactly does this one endpoint accept and return?”, go directly to the endpoint reference.

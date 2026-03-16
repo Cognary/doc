@@ -1,0 +1,79 @@
+---
+title: "POST /v1/memory/find"
+description: "Reference for deterministically locating persisted Aionis memory objects by URI, id, client id, type, and other explicit filters."
+---
+
+# POST /v1/memory/find
+
+## What it does
+
+Finds persisted memory objects with deterministic filters such as `uri`, `id`, `client_id`, `type`, `title_contains`, `text_contains`, and `slots_contains`.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/find" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_find",
+    "type":"handoff",
+    "limit":5
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. one or more filters such as `uri`, `type`, `client_id`, or `text_contains`
+4. `include_slots` or `include_slots_preview`
+5. `limit`
+6. `offset`
+
+## Response fields that matter first
+
+1. `nodes[].uri`
+2. `nodes[].type`
+3. `nodes[].slots_preview`
+4. `find_summary`
+5. `page`
+
+## Example response
+
+```json
+{
+  "nodes": [
+    {
+      "uri": "memory://handoff/handoff_001",
+      "type": "handoff",
+      "slots_preview": {
+        "summary": "Continue invoice follow-up"
+      }
+    }
+  ],
+  "find_summary": {
+    "returned": 1
+  },
+  "page": {
+    "limit": 5,
+    "offset": 0
+  }
+}
+```
+
+## Why this matters for continuity
+
+`find` is the deterministic lookup surface you use when recall is too fuzzy and you already know roughly what artifact you are chasing.
+
+That makes it especially useful for:
+
+1. handoff artifacts
+2. continuity-carrying event nodes
+3. decision-adjacent investigation flows
+
+Use `find` when you need to narrow candidates first, then `resolve` when you need the full payload.
+
+## Choose this route when
+
+Use `find` when you already know the object class or filter and need deterministic narrowing. If you need fuzzy semantic retrieval, use `recall_text` instead.

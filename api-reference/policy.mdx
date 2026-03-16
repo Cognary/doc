@@ -1,0 +1,110 @@
+---
+title: "Policy APIs"
+description: "Use the Aionis policy loop to evaluate rules, constrain tool choice, persist decisions, and feed execution outcomes back into governance."
+---
+
+# Policy APIs
+
+Policy is where Aionis becomes governable instead of only helpful.
+
+This API group is where teams move from prompt influence to inspectable decision influence.
+
+That is the real product jump. Plenty of systems can add memory or suggestions around execution. Policy is where Aionis starts to shape behavior in a way operators can review, debug, and gradually trust. It is also the point where a team first sees whether the product can become part of operational discipline rather than another clever assistant layer.
+
+## Endpoints
+
+> `POST /v1/memory/rules/evaluate`
+> `POST /v1/memory/tools/select`
+> `POST /v1/memory/tools/decision`
+> `POST /v1/memory/tools/run`
+> `POST /v1/memory/tools/feedback`
+
+These routes form a loop, not a checklist. `rules/evaluate` establishes which rules matter in the current context. `tools/select` turns those constraints into governed choice. `tools/decision` and `tools/run` preserve what was actually decided and executed. `tools/feedback` closes the loop so the system can record what happened and adapt over time.
+
+## Typical sequence
+
+1. Evaluate rules with normalized runtime context.
+2. Select candidate tools under policy constraints.
+3. Persist decision and run linkage.
+4. Submit feedback for closed-loop learning.
+
+That sequence matters because teams often try to jump directly into tool selection without a clear evaluation context or stable run identity. When they do, the policy loop feels flaky. In practice, policy gets stronger when the run boundary is explicit and the same `run_id` survives across evaluation, selection, decision, and feedback.
+
+## Best first policy integration
+
+Start with one risky boundary, not a giant rules program.
+
+A good first path is:
+
+1. `rules/evaluate`
+2. `tools/select`
+3. `tools/decision`
+4. `tools/feedback`
+
+This is the right place to start because it proves the important thing first: can the system make tool choice more inspectable and more governable without forcing you to redesign the whole runtime? If that answer is yes, then deeper policy work is worth the effort. If that answer is no, adding more rules only creates ceremony.
+
+## Required IDs
+
+1. `run_id`
+2. `decision_id`
+3. `request_id`
+4. `tenant_id`
+5. `scope`
+
+Persisting those IDs is not bookkeeping for its own sake. They are the backbone of policy review. Without them, you can still run the loop, but you lose the ability to correlate a rule evaluation with a decision, a decision with a run, and a run with the resulting feedback.
+
+## Minimal evaluate request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/rules/evaluate" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"default","run_id":"run_001","context":{"intent":"support_triage"}}' | jq
+```
+
+## Example response (rules/evaluate, trimmed)
+
+```json
+{
+  "status": "ok",
+  "request_id": "req_rules_001",
+  "tenant_id": "default",
+  "scope": "default",
+  "data": {
+    "matched": [],
+    "applied": []
+  }
+}
+```
+
+## Tool selection request skeleton
+
+```json
+{
+  "tenant_id": "default",
+  "scope": "default",
+  "run_id": "run_001",
+  "context": {
+    "intent": "support_triage",
+    "tool": { "name": "ticket_router" }
+  },
+  "candidates": ["ticket_router", "email_sender"]
+}
+```
+
+## Error example and fix
+
+Example error:
+
+```json
+{
+  "error": "invalid_request",
+  "message": "run_id is required for policy flow"
+}
+```
+
+Fix:
+1. Ensure the same `run_id` is passed across evaluate/select/decision/feedback.
+2. Send normalized `context` with stable keys.
+3. Validate required payload shape before request submission.
+
+If you want the product-level explanation next, use [Policy Guide](/how/policy). If you are already wiring payloads and debugging behavior, go straight to [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate), [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select), and [POST /v1/memory/tools/feedback](/api-reference/endpoints/tools-feedback).

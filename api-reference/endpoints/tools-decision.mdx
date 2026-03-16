@@ -1,0 +1,74 @@
+---
+title: "POST /v1/memory/tools/decision"
+description: "Reference for looking up persisted Aionis tool decisions by decision id, decision URI, or the latest run id."
+---
+
+# POST /v1/memory/tools/decision
+
+## What it does
+
+Looks up a persisted decision by `decision_id`, `decision_uri`, or latest `run_id`.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/tools/decision" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "decision_id":"decision_001"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. one of `decision_id`, `decision_uri`, or `run_id`
+
+## Response fields that matter first
+
+1. `lookup_mode`
+2. `lifecycle_summary`
+3. `decision.decision_id`
+4. `decision.decision_uri`
+5. `decision.selected_tool`
+6. `decision.run_id`
+7. `decision.metadata.control_profile_origin` when present
+
+## Example response
+
+```json
+{
+  "lookup_mode": "decision_id",
+  "lifecycle_summary": {
+    "status": "selected"
+  },
+  "decision": {
+    "decision_id": "decision_001",
+    "decision_uri": "memory://decision/decision_001",
+    "selected_tool": "ticket_router",
+    "run_id": "run_001",
+    "metadata": {
+      "control_profile_origin": "execution_state_v1"
+    }
+  }
+}
+```
+
+## Why this matters for continuity
+
+`tools/decision` is the narrowest read surface for the governed execution trace.
+
+Use it when you want to answer:
+
+1. which tool was selected
+2. which run the decision belonged to
+3. whether the decision was shaped by continuity-delivered or state-derived control data
+
+This endpoint is where a selection turns from transient runtime behavior into a durable inspection object.
+
+## Choose this route when
+
+Use `tools/decision` when you already know the decision identity or run and want the single persisted decision record. If you want the whole lifecycle around that decision, use `tools/run`.

@@ -1,0 +1,118 @@
+---
+title: "Replay APIs"
+description: "Use Aionis replay APIs to inspect prior runs, compile reusable playbooks, and execute replay under explicit mode and governance boundaries."
+---
+
+# Replay APIs
+
+Replay is the part of the API where prior execution becomes a reusable runtime asset.
+
+That makes replay one of the most important, and most easy to misunderstand, parts of the system. Replay does not mean “ask the model to try something similar again.” It means Aionis can inspect a prior run, compile a reusable playbook from it, judge whether reuse is appropriate, and execute or dispatch that reuse path under explicit mode boundaries.
+
+The current replay surface is easiest to read in four parts:
+
+1. replay inspection
+2. playbook compilation
+3. candidate and dispatch decisions
+4. governed replay execution
+
+## Current status
+
+Replay pages in this section are currently `code-backed`.
+
+Some replay claims are also `public-evidence-backed`, but replay is not yet in the current `live-verified` Lite set.
+
+Use [Verification Status](/reference/verification-status) when you need the exact boundary.
+
+That does not make replay speculative. It means you should read it with the right confidence level. The route family is real, the contract is meaningful, and some replay behavior already has public evidence behind it. It is simply not part of the current re-run docs fixture set.
+
+## Strongest applied replay case
+
+Use [OpenClaw Adapter](/how/openclaw-adapter) if you want to see replay in a real host boundary instead of only in endpoint form.
+
+That is the clearest applied path today for:
+
+1. replay candidate selection
+2. governed replay dispatch
+3. runtime stop, reroute, and resume behavior
+
+This matters because replay is easiest to appreciate at a runtime boundary. In a static API description, replay can look like one more utility layer. In a real host loop, it becomes obvious why compiling and dispatching a good path is different from starting over.
+
+## Core replay endpoints
+
+### Run inspection
+
+1. [POST /v1/memory/replay/runs/get](/api-reference/endpoints/replay-runs-get)
+
+### Playbook lifecycle
+
+1. [POST /v1/memory/replay/playbooks/compile_from_run](/api-reference/endpoints/replay-compile-from-run)
+2. [POST /v1/memory/replay/playbooks/get](/api-reference/endpoints/replay-playbook-get)
+3. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
+4. [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run)
+5. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
+6. [POST /v1/memory/replay/playbooks/repair/review](/api-reference/endpoints/replay-repair-review)
+
+## The replay path that matters first
+
+If you are evaluating replay for the first time, the shortest useful path is:
+
+1. inspect a prior run with `runs/get`
+2. compile a reusable playbook with `compile_from_run`
+3. inspect eligibility with `playbooks/candidate`
+4. execute in `simulate`, `strict`, or `guided` mode with `playbooks/run`
+5. use `dispatch` when replay choice needs to be runtime-governed
+
+That sequence is the right way to evaluate replay because it separates three questions that often get conflated:
+
+1. can Aionis reconstruct what happened
+2. can it turn that history into a reusable playbook
+3. can it decide, under explicit constraints, whether replay should actually happen now
+
+## Minimal replay sequence
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/runs/get" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_replay","run_id":"run_001"}' | jq
+
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/compile_from_run" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_replay","run_id":"run_001"}' | jq
+
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/candidate" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_replay","playbook_id":"playbook_001"}' | jq
+```
+
+That three-call path is the cleanest way to understand replay. First inspect prior execution, then compile a reusable asset, then ask whether it should be reused now.
+
+## The three execution modes
+
+The current replay execution surface supports:
+
+1. `simulate`
+2. `strict`
+3. `guided`
+
+The important boundary is simple:
+
+1. `simulate` is the safest starting point
+2. `strict` is the strongest reuse path when deterministic conditions match
+3. `guided` is for repair-aware replay, not zero-token deterministic reuse
+
+Those distinctions are what make replay operationally serious. A good replay system should not treat every reuse opportunity the same way. Sometimes you want inspection only. Sometimes you want deterministic reuse. Sometimes you want governed repair with model assistance. Aionis exposes those as different modes instead of hiding them behind one vague “replay” button.
+
+## What to persist
+
+For replay and incident analysis, persist these fields whenever they are available:
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. `run_id`
+5. `decision_id`
+6. `commit_id` or `commit_uri`
+7. `playbook_id` and `version`
+
+If your next question is conceptual, use [Replay Guide](/how/replay). If your next question is contract-level, move into the replay endpoint pages or [API Contract](/reference/api-contract). The key is to evaluate replay as a governed reuse system, not as a generic automation shortcut.

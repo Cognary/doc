@@ -1,0 +1,91 @@
+---
+title: "Handoff Store And Recover"
+description: "Reference for storing and recovering structured Aionis handoff artifacts, including prompt-safe and execution-ready views."
+---
+
+# Handoff Store And Recover
+
+## What it does
+
+`handoff/store` turns continuity into a structured artifact.
+
+`handoff/recover` gives the next runtime both a prompt-safe surface and an execution-ready surface.
+
+It also carries the first visible execution-kernel surfaces:
+
+1. `execution_state_v1`
+2. `execution_packet_v1`
+3. `control_profile_v1`
+
+## Minimal store + recover
+
+```bash
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff_endpoint",
+    "anchor":"task_001",
+    "handoff_kind":"task_handoff",
+    "summary":"Continue invoice follow-up",
+    "handoff_text":"Next step is drafting the customer reply."
+  }' | jq
+
+curl -sS "$BASE_URL/v1/handoff/recover" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff_endpoint",
+    "anchor":"task_001",
+    "handoff_kind":"task_handoff"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `anchor`
+4. `handoff_kind`
+5. `summary`
+6. `handoff_text`
+
+## Response fields that matter first
+
+1. `commit_uri`
+2. `handoff.id`
+3. `matched_nodes`
+4. `prompt_safe_handoff`
+5. `execution_ready_handoff`
+6. `execution_state_v1`
+7. `execution_packet_v1`
+8. `control_profile_v1`
+
+## Example response shape
+
+```json
+{
+  "request_id": "req_handoff_001",
+  "commit_uri": "memory://commit/commit_001",
+  "handoff": {
+    "id": "handoff_001"
+  },
+  "prompt_safe_handoff": {},
+  "execution_ready_handoff": {}
+}
+```
+
+## Why these kernel fields matter
+
+Handoff is no longer only a structured note.
+
+On the current route path it is also a continuity carrier:
+
+1. `handoff/store` can persist continuity projections and transition metadata
+2. `handoff/recover` can return updated structured continuity instead of rebuilding everything from handoff text alone
+
+That is why handoff now matters to more than cross-session continuation. It is also one of the first places where the execution continuity kernel becomes externally visible without changing the public route family.
+
+## Choose this route when
+
+Use `handoff/store + recover` when work has to survive a runtime boundary: another session, another agent, or another execution role. If you only need durable memory, stay on `memory/write`; if you need resumable structured continuation, handoff is the right route family.

@@ -1,0 +1,62 @@
+---
+title: "LangGraph"
+description: "Use Aionis with LangGraph-style runtimes to keep planner context bounded, tool choice inspectable, and execution reusable."
+---
+
+# LangGraph
+
+LangGraph is a natural fit for Aionis because the planner-executor boundary is exactly where continuity gets lost.
+
+## Practical flow
+
+The most useful integration order is:
+
+1. before planning: `recall_text` or `planning/context`
+2. before action: `rules/evaluate` and `tools/select`
+3. after execution: `write` and `tools/feedback`
+4. when reuse matters: replay routes
+
+## Smoke path
+
+```bash
+bash examples/langgraph_adapter_smoke.sh
+```
+
+## Why this fit is strong
+
+This pairing works because LangGraph already exposes the places where Aionis adds value:
+
+1. planner context before the next step
+2. governed tool choice before execution
+3. memory and feedback after execution
+4. replay when a successful path should become reusable
+
+## Why LangGraph is a natural wedge
+
+LangGraph already makes developers think in stages, boundaries, and next-step state.
+
+That means the Aionis value is easier to see there than in a loosely structured chat app:
+
+1. before a node runs, the graph needs the right context
+2. before a tool step runs, the runtime needs a bounded decision
+3. after execution, the system needs durable evidence of what happened
+
+Those are exactly the seams where Aionis is strongest.
+
+## What to test first
+
+The first useful LangGraph integration is not a full graph rewrite.
+
+It is one graph path where continuation quality actually matters.
+
+A practical sequence is:
+
+1. add `recall_text` or `planning/context` before the planner node
+2. add `tools/select` only at one risky action boundary
+3. write outcome facts and feedback after the node finishes
+
+If those three steps improve the path without making the graph harder to reason about, the integration is working for the right reasons.
+
+## Choose this page when
+
+Use this page when you already think in planner/executor stages and want to add Aionis at graph boundaries. If you want the more general route explanation first, read [Memory And Context Guide](/how/memory-context) and [Policy Guide](/how/policy).

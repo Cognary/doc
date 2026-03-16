@@ -1,0 +1,63 @@
+---
+title: "Memory Layers"
+description: "Understand the Aionis L0-L5 layered memory and compaction model, including the difference between stored, derived, and injected context."
+---
+
+# Memory Layers
+
+This page is the advanced reference for Aionis layered memory and compression.
+
+It belongs after a developer already understands the product loop.
+
+## The L0-L5 model
+
+```text
+L0 raw evidence
+L1 distilled facts
+L2 structural grouping
+L3 deterministic compression
+L4 semantic abstraction
+L5 runtime compaction
+```
+
+### L0 Raw Evidence Layer
+
+The original execution evidence:
+
+1. events
+2. evidence
+3. source-of-record details that should remain auditable
+
+### L1 Distilled Fact Layer
+
+Structured facts extracted from raw evidence at write time.
+
+### L2 Structural Aggregation Layer
+
+Grouped or clustered structure, such as topic-level organization.
+
+### L3 Deterministic Compression Layer
+
+Deterministic rollups that shorten memory without breaking traceability.
+
+### L4 Semantic Abstraction Layer
+
+Higher-level summaries, constraints, risks, lessons, or patterns that sit above deterministic rollups.
+
+### L5 Runtime Context Compaction Layer
+
+Serving-time compaction.
+
+This is not a storage layer. It controls what the model actually sees under budget.
+
+## Reading rule
+
+Treat L0-L4 as persistence and transformation layers.
+
+Treat L5 as a serving-time decision layer.
+
+That split matters because teams often confuse “what was stored” with “what the model actually saw.”
+
+## Choose this page when
+
+Use this page when you are already past first integration and need to reason about how durable memory turns into compact runtime context. It is not the right first page for product evaluation.

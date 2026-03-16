@@ -1,0 +1,35 @@
+---
+title: "POST /v1/memory/sandbox/runs/logs"
+description: "Fetch logs for a sandbox run under sandbox-read controls."
+---
+
+# POST /v1/memory/sandbox/runs/logs
+
+Use this endpoint when sandbox execution has to be inspected through run logs.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/runs/logs" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "run_id":"sandbox_run_001"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "run_id": "sandbox_run_001",
+  "logs": [
+    "hello from sandbox"
+  ]
+}
+```
+
+## Choose this route when
+
+Use `runs/logs` when the status is not enough and you need execution output. If the interesting output is a generated file, go to `runs/artifact`.

@@ -1,0 +1,156 @@
+---
+title: "Aionis API Reference"
+description: "Navigate the Aionis API by endpoint group, durable tracing fields, and endpoint-level contract pages."
+---
+
+# Aionis API Reference
+
+Use this section to map real integration tasks to the current public Aionis surface.
+
+This page is here to make the surface legible, not to overwhelm you with every route at once. Aionis is easiest to integrate when you think in task groups first and endpoints second. Most teams do not start by needing the entire API. They start by needing one of a few concrete things: write durable execution memory, assemble better context, shape tool choice, preserve handoff, or reuse a successful path.
+
+## What you will learn
+
+1. Which endpoint group to use for each integration task.
+2. Which IDs to log for replay and incident analysis.
+3. Where to find contract-level details for auth, errors, and operations.
+
+That framing matters because the value of an API reference is not that it lists routes. It is that it helps a developer avoid the two most common mistakes: reaching for the wrong endpoint family first, or wiring the right endpoint family without persisting the identifiers needed to debug it later.
+
+## How to use this section
+
+1. Use the left sidebar to pick an endpoint group.
+2. Use [API Contract](/reference/api-contract) for stable identifiers, endpoint groups, and contract boundaries.
+3. Use [Common Errors](/reference/common-errors) for failure semantics and operational triage.
+4. Use [Production Operations](/reference/production-ops) for deployment and incident workflows.
+
+In practice, a good reading order is simpler than it looks. If you are just starting, use the group pages to understand what each API family is for. When you know which family you need, move into the endpoint pages for exact payloads. Then use contract, error, and operations pages only when your questions shift from “how do I call this” to “how do I trust and operate this.”
+
+## See the API in one real runtime
+
+For one applied proof that these APIs matter together, start with [OpenClaw Adapter](/how/openclaw-adapter).
+
+That demo exercises the current Aionis surface as a connected control loop rather than as isolated endpoint calls:
+
+1. `context/assemble`
+2. `rules/evaluate`
+3. `tools/select`
+4. `tools/feedback`
+5. `write`
+6. `handoff/store`
+7. `replay candidate`
+8. `replay dispatch`
+
+That is why the OpenClaw case is worth keeping in mind while reading the API. It shows that these routes are not an arbitrary collection. They are a connected control loop that becomes meaningful when a real runtime has to continue, choose, recover, and reuse work under pressure.
+
+## Task to endpoint mapping
+
+1. Persist new execution memory:
+   use `POST /v1/memory/write`
+2. Build prompt context from natural language:
+   use `POST /v1/memory/recall_text` or `POST /v1/memory/context/assemble`
+3. Enforce policy before action:
+   use `POST /v1/memory/rules/evaluate` then `POST /v1/memory/tools/select`
+4. Reconstruct and inspect a failed run:
+   use `POST /v1/memory/replay/runs/get` and `POST /v1/memory/resolve`
+5. Preserve a continuation boundary:
+   use `POST /v1/handoff/store` then `POST /v1/handoff/recover`
+6. Run controlled execution in a guarded plane:
+   use `POST /v1/memory/sandbox/sessions` and `POST /v1/memory/sandbox/execute`
+
+## Smallest end-to-end API sample
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_api_home",
+    "input_text":"Customer prefers email follow-up",
+    "memory_lane":"shared",
+    "nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email follow-up"}]
+  }' | jq
+
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_api_home",
+    "anchor":"task_001",
+    "handoff_kind":"task_handoff",
+    "summary":"Continue customer follow-up task",
+    "handoff_text":"Next action is drafting the follow-up email."
+  }' | jq
+```
+
+That tiny sequence is enough to prove two things at once: memory survives, and continuation can cross a boundary as a structured artifact instead of a loose note.
+
+For most first integrations, that mapping is enough to stop the API from feeling larger than it really is. The important part is to start from the narrowest task you actually need. If your first problem is poor continuation, do not start in replay. If your first risk is uncontrolled tool use, do not bury yourself in write semantics before you understand the policy loop.
+
+## Common integration fields
+
+Always persist these fields in logs and telemetry:
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. `run_id`
+5. `decision_id`
+6. `commit_uri`
+
+These fields matter because Aionis becomes much easier to trust when runs are traceable. Without them, the system can still work, but you lose much of the ability to inspect, replay, correlate incidents, and explain what happened across boundaries.
+
+## Quick endpoint map
+
+### Memory
+
+> `POST /v1/memory/write`
+> `POST /v1/memory/recall_text`
+> `POST /v1/memory/context/assemble`
+
+### Policy
+
+> `POST /v1/memory/rules/evaluate`
+> `POST /v1/memory/tools/select`
+> `POST /v1/memory/tools/feedback`
+
+### Handoff
+
+> `POST /v1/handoff/store`
+> `POST /v1/handoff/recover`
+
+### Replay
+
+> `POST /v1/memory/replay/runs/get`
+> `POST /v1/memory/replay/playbooks/compile_from_run`
+> `POST /v1/memory/replay/playbooks/candidate`
+> `POST /v1/memory/replay/playbooks/run`
+> `POST /v1/memory/replay/playbooks/dispatch`
+
+### Sandbox
+
+> `POST /v1/memory/sandbox/sessions`
+> `POST /v1/memory/sandbox/execute`
+> `POST /v1/memory/sandbox/runs/get`
+
+Those five groups are enough to orient most readers. Memory is how useful execution survives. Policy is how it becomes governable. Handoff is how continuity crosses boundaries cleanly. Replay is how successful execution stops being one-time output and starts becoming reusable infrastructure. Sandbox is how controlled execution is isolated when a team needs that boundary.
+
+## Endpoint schema pages
+
+1. [Endpoint Schemas Index](/api-reference/endpoints/)
+2. [POST /v1/memory/write](/api-reference/endpoints/write)
+3. [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text)
+4. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
+5. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
+6. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
+7. [POST /v1/handoff/store + recover](/api-reference/endpoints/handoff)
+8. [POST /v1/memory/resolve](/api-reference/endpoints/resolve)
+9. [POST /v1/memory/replay/runs/get](/api-reference/endpoints/replay-runs-get)
+10. [POST /v1/memory/replay/playbooks/compile_from_run](/api-reference/endpoints/replay-compile-from-run)
+11. [POST /v1/memory/replay/playbooks/get](/api-reference/endpoints/replay-playbook-get)
+12. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
+13. [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run)
+14. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
+15. [POST /v1/memory/replay/playbooks/repair/review](/api-reference/endpoints/replay-repair-review)
+
+If you already know which part of the system you care about, go straight into that group page or endpoint page. If you still need the boundary around identifiers and guarantees, the next useful page is [API Contract](/reference/api-contract). If you need to know what was re-run in the current validation cycle, use [Verification Status](/reference/verification-status).

@@ -1,0 +1,77 @@
+---
+title: "POST /v1/memory/tools/feedback"
+description: "Reference for feeding execution outcome back into the Aionis policy loop, including zero-attribution and matched-rule paths."
+---
+
+# POST /v1/memory/tools/feedback
+
+## What it does
+
+Feeds execution outcome back into the policy loop.
+
+It can attribute feedback to matched rule sources, but it can also legitimately return that no rule attribution occurred.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/tools/feedback" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "run_id":"run_001",
+    "decision_id":"decision_001",
+    "selected_tool":"ticket_router",
+    "outcome":"success",
+    "input_text":"ticket_router resolved the support request correctly"
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `run_id`
+4. `decision_id` or `decision_uri`
+5. `context`
+6. `candidates`
+7. `selected_tool`
+8. `outcome`
+9. `input_text`
+
+## Response fields that matter first
+
+1. `ok`
+2. `updated_rules`
+3. `rule_node_ids`
+4. `commit_id` or `commit_uri`
+5. `note`
+
+## Example response
+
+```json
+{
+  "ok": true,
+  "updated_rules": 1,
+  "rule_node_ids": ["rule_001"],
+  "commit_uri": "memory://commit/commit_001",
+  "note": "feedback stored"
+}
+```
+
+## Why this matters for continuity
+
+`tools/feedback` closes the shortest inspectable loop in the current policy path:
+
+1. select a tool
+2. persist a decision
+3. execute
+4. feed the result back
+
+That is why `decision_id`, `run_id`, and `commit_uri` belong together in your logs.
+
+Even when `updated_rules = 0`, the route is still doing useful work: it records a bounded outcome instead of leaving the execution path opaque.
+
+## Choose this route when
+
+Use `tools/feedback` after a tool actually ran and you need the outcome captured back into policy state. Do not call it just to inspect policy; that is what `rules/evaluate`, `tools/select`, and `tools/run` are for.

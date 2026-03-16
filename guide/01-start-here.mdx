@@ -1,0 +1,19 @@
+# Start Here
+
+This page is kept as a compatibility page for older guide links.
+
+## Current path
+
+```text
+/how/quickstart
+/how/complete-flow
+/how/sdk-and-http
+```
+
+Use the current getting-started path when you want the maintained first-success flow instead of the older guide sequence.
+
+```bash
+curl -X POST http://localhost:3001/v1/memory/write \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_v4_start","input_text":"start-here proof","nodes":[{"type":"event","text_summary":"start-here proof"}]}'
+```

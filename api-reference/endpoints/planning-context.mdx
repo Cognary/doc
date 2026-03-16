@@ -1,0 +1,85 @@
+---
+title: "POST /v1/memory/planning/context"
+description: "Reference for building planner-facing context in Aionis, including compact planning summaries and budget-aware layered context."
+---
+
+# POST /v1/memory/planning/context
+
+## What it does
+
+Builds planner-facing context and can also return compact planning metadata such as selected tool and estimated context size.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/planning/context" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_planning",
+    "query_text":"prepare the next customer follow-up step",
+    "context":{"intent":"customer_follow_up"},
+    "tool_candidates":["ticket_router","email_sender"],
+    "return_layered_context":true
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `query_text`
+4. `context`
+5. `tool_candidates`
+6. `return_layered_context`
+7. `context_optimization_profile`
+
+Kernel-aware inputs:
+
+1. `execution_packet_v1`
+2. `execution_state_v1`
+
+## Response fields that matter first
+
+1. `planning_summary.selected_tool`
+2. `planning_summary.decision_id`
+3. `planning_summary.context_est_tokens`
+4. `planning_summary.selected_memory_layers`
+5. `layered_context`
+6. `execution_kernel.packet_source_mode`
+7. `execution_kernel.state_first_assembly`
+
+## Example response
+
+```json
+{
+  "planning_summary": {
+    "selected_tool": "email_sender",
+    "decision_id": "decision_001",
+    "context_est_tokens": 482,
+    "selected_memory_layers": ["events", "handoff"]
+  },
+  "layered_context": {
+    "events": [],
+    "handoff": []
+  },
+  "execution_kernel": {
+    "packet_source_mode": "state_first",
+    "state_first_assembly": true
+  }
+}
+```
+
+## Why the kernel fields matter
+
+When `execution_state_v1` is present, this route can build planner context from durable task state instead of relying only on recall and caller-supplied static context.
+
+The most important response signal is:
+
+1. `execution_kernel.packet_source_mode = state_first`
+
+That tells you planner context is already being assembled from the continuity kernel rather than only from projection or prompt-shaped carryover.
+
+## Choose this route when
+
+Use `planning/context` when you want planner-facing context plus summary signals like selected tool, estimated context size, and selected memory layers. If you want the fuller runtime bundle used closer to execution, use `context/assemble` instead.

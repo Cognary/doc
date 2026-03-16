@@ -1,0 +1,152 @@
+---
+title: "Quickstart"
+description: "Run Lite or Server, write one memory, recall it, and recover one handoff in the shortest useful Aionis evaluation path."
+---
+
+# Quickstart
+
+This quickstart is built for first success, not for exhaustive setup coverage.
+
+That is an intentional tradeoff. The purpose of a first quickstart is not to teach every concept in the system. It is to get one developer to a clean “yes, this product does something real” moment as fast as possible. Once that moment exists, the deeper guides become useful. Before that, they mostly feel like work.
+
+## Path A: Lite In Minutes
+
+Use Lite if your goal is to validate Aionis locally with the lowest setup friction.
+
+Use a fresh scope for docs-style validation so you do not mix your result with existing local data.
+
+This path focuses on the smallest loop that still proves the product category:
+
+1. write one durable memory item
+2. retrieve it under a meaningful query
+3. store one explicit handoff
+4. recover that handoff as a continuity object
+
+If those four things work, then Aionis is no longer just a claim about “execution memory.” You have already seen context survive beyond the original turn.
+
+This path assumes the repository Lite entrypoint:
+
+1. `npm run start:lite`
+2. default health and API port: `3001`
+
+```bash
+git clone https://github.com/Cognary/Aionis.git
+cd Aionis
+cp .env.example .env
+npm install
+npm run build
+npm run start:lite
+```
+
+Health:
+
+```bash
+curl -fsS http://localhost:3001/health | jq '{ok,aionis_edition,memory_store_backend}'
+```
+
+Expected shape:
+
+1. `ok = true`
+2. `aionis_edition = "lite"`
+3. `memory_store_backend = "lite_sqlite"`
+
+Write one memory item:
+
+```bash
+curl -sS http://localhost:3001/v1/memory/write \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_v4_quickstart",
+    "input_text":"Customer prefers email follow-up",
+    "memory_lane":"shared",
+    "nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email follow-up"}]
+  }' | jq '{scope,tenant_id,commit_id,commit_uri,nodes}'
+```
+
+Recall it:
+
+```bash
+curl -sS http://localhost:3001/v1/memory/recall_text \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_v4_quickstart",
+    "query_text":"preferred follow-up channel",
+    "limit":5
+  }' | jq '{scope,tenant_id,context}'
+```
+
+Store one exact handoff:
+
+```bash
+curl -sS http://localhost:3001/v1/handoff/store \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_v4_quickstart",
+    "anchor":"quickstart_patch_001",
+    "handoff_kind":"task_handoff",
+    "summary":"Lite quickstart validated",
+    "handoff_text":"Write and recall worked. Next step is testing replay integration.",
+    "memory_lane":"shared"
+  }' | jq '{scope,tenant_id,commit_uri,handoff}'
+```
+
+Recover it:
+
+```bash
+curl -sS http://localhost:3001/v1/handoff/recover \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_v4_quickstart",
+    "anchor":"quickstart_patch_001",
+    "handoff_kind":"task_handoff"
+  }' | jq '{scope,tenant_id,matched_nodes,handoff,execution_ready_handoff}'
+```
+
+## What counts as first success
+
+You are done when:
+
+1. health is green
+2. write returns a `commit_id` and `commit_uri`
+3. recall returns usable context
+4. handoff recover returns a matched handoff artifact
+
+At that point, Aionis is no longer abstract. You have continuity, not just setup.
+
+That distinction matters more than it sounds. A lot of infrastructure quickstarts only prove that the service is up. This one is supposed to prove that the product shape is real.
+
+## What to do next
+
+Choose the next path by goal.
+
+Use [Complete Flow](/how/complete-flow) if you want one fuller API loop that goes beyond `write -> recall -> handoff`. Use [OpenClaw Adapter](/how/openclaw-adapter) if you want the strongest applied runtime demo. Use [Endpoint Reference](/reference/endpoints) if your next question is about exact request and response contracts.
+
+If you switch from `npm run start:lite` to the published SDK CLI later, note that:
+
+1. `npx @aionis/sdk dev` defaults to port `3321`
+2. this quickstart uses repository Lite on port `3001`
+
+## Path B: Real runtime demo with OpenClaw
+
+If you want the strongest applied Aionis demo instead of a raw API loop, use the OpenClaw adapter next:
+
+1. [OpenClaw Adapter](/how/openclaw-adapter)
+
+Why this path matters:
+
+1. it exercises `context/assemble`, policy, replay, and handoff in one host runtime
+2. it shows Aionis at the tool-loop boundary where agent systems usually degrade
+3. it already has public benchmark evidence and case studies behind it
+
+The shortest progression is:
+
+1. finish this Lite quickstart
+2. install the OpenClaw adapter
+3. point it at the same Aionis Lite instance
+4. run one constrained OpenClaw task and inspect the resulting control behavior
+
+If this quickstart worked, you do not need another list of links to know what comes next. Either deepen the same API path with [Complete Flow](/how/complete-flow), or switch to [OpenClaw Adapter](/how/openclaw-adapter) if you want to see Aionis operating inside a real tool loop instead of a minimal docs flow.

@@ -1,0 +1,78 @@
+---
+title: "Common Errors"
+description: "Understand the shared Aionis failure model across request validation, lookup misses, backpressure, and edition boundaries."
+---
+
+# Common Errors
+
+Use this page to understand the shared failure model across current Aionis endpoints.
+
+## Error envelope
+
+Most Aionis API failures land in one of three response shapes:
+
+1. Zod validation failures
+2. typed application failures
+3. unhandled internal failures
+
+## Cross-endpoint error families
+
+### `400` request and contract failures
+
+Common examples:
+
+1. `invalid_request`
+2. `invalid_tenant_id`
+3. `invalid_scope`
+4. `invalid_aionis_uri`
+5. `conflicting_filters`
+
+### `404` scope and object lookup failures
+
+Common examples:
+
+1. `rule_not_found_in_scope`
+2. `decision_not_found_in_scope`
+3. `run_not_found_in_scope`
+4. `node_not_found_in_scope_or_visibility`
+
+### `429` rate limit and quota failures
+
+Common examples:
+
+1. `rate_limited_write`
+2. `rate_limited_recall`
+3. `write_backpressure`
+4. `recall_backpressure`
+
+### `501` edition and capability boundaries
+
+Common examples:
+
+1. `server_only_in_lite`
+2. `replay_read_not_supported_in_embedded`
+
+## Practical reading rule
+
+1. treat `400` as request-shape or contract misuse
+2. treat `404` as scope/object lookup failure
+3. treat `409` as state conflict
+4. treat `429` as retry-with-backoff
+5. treat `501` as an edition or capability boundary, not a transient failure
+
+## Example operator response
+
+If you see:
+
+```json
+{
+  "error": "replay_read_not_supported_in_embedded",
+  "message": "replay read endpoints are not supported in embedded mode"
+}
+```
+
+the right move is not retry. The right move is to treat it as a capability boundary and change where that feature runs.
+
+## Choose this page when
+
+Use this page when you want the cross-endpoint failure families in one place. If you are implementing retry logic in a client, start with [Error Model](/api-reference/errors). If you are deciding whether a feature should exist in the current deployment at all, this page is the better fit.

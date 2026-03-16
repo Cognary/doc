@@ -1,0 +1,85 @@
+# Endpoint Schemas
+
+Contract-level request/response references for high-traffic Aionis endpoints.
+
+This page should be used after you already know which product line you are touching. It is not meant to replace the group pages in [Memory APIs](/api-reference/memory), [Policy APIs](/api-reference/policy), or [Replay APIs](/api-reference/replay). Its job is narrower: help you jump directly to the exact request and response shape once your integration question is already specific.
+
+In practice, most teams should read endpoint pages in small clusters. If you are proving the basic memory wedge, start with `write`, `recall_text`, and `context/assemble`. If you are trying to govern tool choice, start with `rules/evaluate` and `tools/select`. If you are investigating reuse, failure reconstruction, or controlled re-execution, then move into the replay endpoints.
+
+That matters because endpoint pages are strongest when they answer one exact question at a time. They are not the best way to learn the whole product from scratch.
+
+## Fast cluster examples
+
+### Memory cluster
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","nodes":[{"type":"event","memory_lane":"shared","text_summary":"hello"}]}' | jq
+curl -sS "$BASE_URL/v1/memory/recall_text" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","query_text":"hello","limit":5}' | jq
+```
+
+### Policy cluster
+
+```bash
+curl -sS "$BASE_URL/v1/memory/rules/evaluate" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","run_id":"run_001","context":{"intent":"support_triage"}}' | jq
+curl -sS "$BASE_URL/v1/memory/tools/select" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","run_id":"run_001","candidates":["router","email_sender"]}' | jq
+```
+
+### Handoff cluster
+
+```bash
+curl -sS "$BASE_URL/v1/handoff/store" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","anchor":"task_001","handoff_kind":"task_handoff","summary":"continue","handoff_text":"next step"}' | jq
+curl -sS "$BASE_URL/v1/handoff/recover" -H 'content-type: application/json' -d '{"tenant_id":"default","scope":"docs_index","anchor":"task_001","handoff_kind":"task_handoff"}' | jq
+```
+
+## Memory
+
+1. [POST /v1/memory/write](/api-reference/endpoints/write)
+2. [POST /v1/memory/recall](/api-reference/endpoints/recall)
+3. [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text)
+4. [POST /v1/memory/planning/context](/api-reference/endpoints/planning-context)
+5. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
+6. [POST /v1/memory/sessions](/api-reference/endpoints/sessions)
+7. [POST /v1/memory/events](/api-reference/endpoints/events)
+8. [GET /v1/memory/sessions/:session_id/events](/api-reference/endpoints/session-events)
+9. [POST /v1/memory/find](/api-reference/endpoints/find)
+10. [POST /v1/memory/resolve](/api-reference/endpoints/resolve)
+11. [POST /v1/memory/packs/export](/api-reference/endpoints/packs-export)
+12. [POST /v1/memory/packs/import](/api-reference/endpoints/packs-import)
+13. [POST /v1/memory/archive/rehydrate](/api-reference/endpoints/archive-rehydrate)
+14. [POST /v1/memory/nodes/activate](/api-reference/endpoints/nodes-activate)
+
+## Policy Loop
+
+1. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
+2. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
+
+## Handoff
+
+1. [POST /v1/handoff/store + recover](/api-reference/endpoints/handoff)
+
+## Replay
+
+1. [POST /v1/memory/replay/runs/get](/api-reference/endpoints/replay-runs-get)
+2. [POST /v1/memory/replay/run/start](/api-reference/endpoints/replay-run-start)
+3. [POST /v1/memory/replay/step/before](/api-reference/endpoints/replay-step-before)
+4. [POST /v1/memory/replay/step/after](/api-reference/endpoints/replay-step-after)
+5. [POST /v1/memory/replay/run/end](/api-reference/endpoints/replay-run-end)
+6. [POST /v1/memory/replay/playbooks/compile_from_run](/api-reference/endpoints/replay-compile-from-run)
+7. [POST /v1/memory/replay/playbooks/get](/api-reference/endpoints/replay-playbook-get)
+8. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
+9. [POST /v1/memory/replay/playbooks/promote](/api-reference/endpoints/replay-playbook-promote)
+10. [POST /v1/memory/replay/playbooks/repair](/api-reference/endpoints/replay-playbook-repair)
+11. [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run)
+12. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
+13. [POST /v1/memory/replay/playbooks/repair/review](/api-reference/endpoints/replay-repair-review)
+
+## Sandbox
+
+1. [POST /v1/memory/sandbox/sessions](/api-reference/endpoints/sandbox-sessions)
+2. [POST /v1/memory/sandbox/execute](/api-reference/endpoints/sandbox-execute)
+3. [POST /v1/memory/sandbox/runs/get](/api-reference/endpoints/sandbox-runs-get)
+4. [POST /v1/memory/sandbox/runs/logs](/api-reference/endpoints/sandbox-runs-logs)
+5. [POST /v1/memory/sandbox/runs/artifact](/api-reference/endpoints/sandbox-runs-artifact)
+6. [POST /v1/memory/sandbox/runs/cancel](/api-reference/endpoints/sandbox-runs-cancel)
+
+If you are still deciding which cluster to read first, use the simpler rule. Continuity and recall problems point to memory, uncontrolled tool behavior points to policy, cross-session or cross-agent continuation problems point to handoff, and expensive rediscovery or rerun work points to replay.

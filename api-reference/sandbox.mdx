@@ -1,0 +1,55 @@
+---
+title: "Sandbox APIs"
+description: "Inspect the experimental Aionis sandbox execution surface and its safety boundaries before enabling controlled command execution."
+---
+
+# Sandbox APIs (Experimental)
+
+Sandbox belongs in the deep layer of the site.
+
+It is not the normal first integration path, and it should not be treated as casually enabled infrastructure.
+
+It exists for teams that need controlled execution with explicit safety, budget, and command-boundary controls. That makes it a real product surface, but not a default one.
+
+## Endpoints
+
+> `POST /v1/memory/sandbox/sessions`
+> `POST /v1/memory/sandbox/execute`
+> `POST /v1/memory/sandbox/runs/get`
+> `POST /v1/memory/sandbox/runs/logs`
+> `POST /v1/memory/sandbox/runs/artifact`
+> `POST /v1/memory/sandbox/runs/cancel`
+
+These routes form one operational cluster:
+
+1. create a sandbox session
+2. execute or enqueue a run
+3. inspect state, logs, and artifacts
+4. cancel when the run should not continue
+
+## Safety guidance
+
+1. Keep sandbox disabled unless your runtime needs controlled execution.
+2. Use explicit command allowlists and strict timeout settings.
+3. Isolate sandbox credentials and execution plane from primary data plane.
+4. Treat local execution consent and allowed-command boundaries as product requirements, not optional hardening.
+
+The important point is that sandbox safety is part of the product contract. If those boundaries are loose, the integration is not merely “risky.” It is incorrectly configured.
+
+## Error example and fix
+
+Example error:
+
+```json
+{
+  "error": "forbidden",
+  "message": "sandbox command not allowed"
+}
+```
+
+Fix:
+1. Add command to sandbox allowlist policy (if approved).
+2. Validate timeout and mode constraints for the requested action.
+3. Re-run with a policy-approved command profile.
+
+If you need the operational boundary next, use [Production Operations](/reference/production-ops) and [Governance](/reference/governance). If you need the exact request and response pages, go directly to the sandbox endpoint pages in this API section.

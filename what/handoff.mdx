@@ -1,0 +1,75 @@
+---
+title: "Handoff"
+description: "See how Aionis turns lossy summaries into structured continuity artifacts that survive session and runtime boundaries."
+---
+
+# Handoff
+
+Handoff is one of the clearest explanations for why Aionis exists.
+
+Most teams already know the pain:
+
+1. one agent finishes
+2. another agent starts
+3. the handoff is vague
+4. the work gets reinterpreted badly
+
+## The product meaning of handoff
+
+Handoff in Aionis is not just a summary blob.
+
+It is a continuity artifact that can preserve:
+
+1. what was done
+2. what matters next
+3. what risk remains
+4. what acceptance checks still matter
+
+## Smallest route map
+
+```text
+handoff/store    -> persist a structured continuity artifact
+handoff/recover  -> recover it for the next actor or runtime
+```
+
+## Why that matters more than teams think
+
+Most agent systems do not fail in the middle of one step. They fail at the boundary between steps.
+
+The first session knows too much.
+The next session knows too little.
+The team then tries to patch the gap with longer prompts, more notes, or another summary layer.
+
+That usually makes continuation feel better for one run, but it does not create a durable execution contract.
+
+Aionis treats handoff as a continuity artifact instead:
+
+1. something that can be stored
+2. something that can be recovered exactly
+3. something that can carry structured next-step material
+4. something that can later be inspected like the rest of the runtime trace
+
+This is why handoff in Aionis matters to single-agent continuation, multi-agent coordination, and human review loops. It is not merely a nicer summary. It is the place where the next actor can inherit the same execution facts instead of reinterpreting them from scratch.
+
+## What a good handoff should preserve
+
+At minimum, a serious handoff should preserve:
+
+1. what the task is actually about
+2. what files or surfaces matter next
+3. what acceptance checks still gate completion
+4. what should not be broken while continuing
+
+That is the difference between “continue this task” and “continue this task safely with the same operating assumptions.”
+
+## Continue from product to proof
+
+1. [Handoff Guide](/how/handoff)
+2. [Complete Flow](/how/complete-flow)
+3. [Handoff Store and Recover Reference](/reference/endpoints)
+4. [Verification Status](/reference/verification-status)
+5. [OpenClaw Adapter](/how/openclaw-adapter)
+
+## Choose this page when
+
+Use this page when the pain is lossy continuation across session, agent, or review boundaries. If you want to prove it directly, go to the handoff guide or endpoint page next.

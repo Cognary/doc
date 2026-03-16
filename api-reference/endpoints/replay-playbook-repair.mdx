@@ -1,0 +1,47 @@
+---
+title: "POST /v1/memory/replay/playbooks/repair"
+description: "Create or update replay repair work before later review or governed execution."
+---
+
+# POST /v1/memory/replay/playbooks/repair
+
+Use this endpoint when replay needs a repair path before it can be reviewed or executed safely.
+
+## What it is for
+
+1. repair-aware replay workflows
+2. patch or repair proposal capture
+3. governed replay recovery paths
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/repair" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_replay",
+    "playbook_id":"playbook_001",
+    "version":1,
+    "patch":"replace ticket_router with email_sender on step_002"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "playbook_id": "playbook_001",
+  "version": 2,
+  "repair_state": "pending_review",
+  "commit_uri": "memory://commit/commit_005"
+}
+```
+
+## Important boundary
+
+Repair creates a governed proposal. It is not approval, promotion, or automatic runtime learning by itself.
+
+## Choose this route when
+
+Use `playbooks/repair` when a replay asset needs a proposed patch before review. If the proposal already exists and you are making the governance decision, move to `repair/review`.

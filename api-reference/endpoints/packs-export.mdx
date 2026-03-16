@@ -1,0 +1,50 @@
+---
+title: "POST /v1/memory/packs/export"
+description: "Export a memory pack for administrative transfer, analysis, or controlled environment movement."
+---
+
+# POST /v1/memory/packs/export
+
+Use this endpoint when an admin workflow needs to export a memory pack from the current store.
+
+## What it is for
+
+1. administrative export
+2. controlled transfer between environments
+3. offline analysis or migration support
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/packs/export" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_admin_pack",
+    "format":"json"
+  }' | jq
+```
+
+## Response fields that matter first
+
+1. `pack_id`
+2. `artifact_uri`
+3. `format`
+
+## Example response
+
+```json
+{
+  "pack_id": "pack_001",
+  "artifact_uri": "memory://pack/pack_001",
+  "format": "json"
+}
+```
+
+## Important boundary
+
+This route is admin-gated and capability-gated. It belongs to serious operations, not first product evaluation.
+
+## Choose this route when
+
+Use `packs/export` for migration, backup, or controlled environment transfer. It is an admin surface, not part of the normal product wedge.

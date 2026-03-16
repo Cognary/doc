@@ -1,0 +1,56 @@
+---
+title: "Session Events"
+description: "List events for a stored memory session when investigating continuity or reconstructing session history."
+---
+
+# GET /v1/memory/sessions/:session_id/events
+
+Use this endpoint to list the events associated with a stored session.
+
+## What it is for
+
+1. reconstructing session history
+2. reviewing session-scoped event chains
+3. debugging continuity behavior tied to one session
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sessions/session_001/events?tenant_id=default&scope=docs_sessions" | jq
+```
+
+## Request fields that matter first
+
+1. `session_id` in the path
+2. `tenant_id`
+3. `scope`
+
+## Response fields that matter first
+
+1. `request_id`
+2. `session_id`
+3. ordered event list
+
+## Example response
+
+```json
+{
+  "request_id": "req_session_events_001",
+  "session_id": "session_001",
+  "events": [
+    {
+      "event_id": "event_001",
+      "event_type": "tool_result",
+      "text_summary": "Router selected ticket_router for customer follow-up"
+    }
+  ]
+}
+```
+
+## Important boundary
+
+This route is only valuable if your integration is actually writing session-graph data. Otherwise it will not answer the continuity questions you are really asking.
+
+## Choose this route when
+
+Use `session-events` when a session already exists and you want its ordered event history. If you are still trying to discover candidate artifacts, use `find` or `recall_text` instead.

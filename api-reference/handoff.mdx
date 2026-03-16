@@ -1,0 +1,92 @@
+---
+title: "Handoff APIs"
+description: "Use Aionis handoff APIs to persist structured continuity artifacts and recover execution-ready state across sessions, agents, and runtimes."
+---
+
+# Handoff APIs
+
+Handoff is the API family that turns continuation from a vague note into a structured artifact.
+
+That matters because many systems only discover their continuity problem when work changes hands. A session ends, a second agent takes over, or a human reviewer needs to resume a task. If the only thing that survives is a paragraph of text, the next actor is forced to reconstruct intent, state, and next action from scratch.
+
+Aionis exposes handoff as a first-class API because that boundary is one of the product's core jobs.
+
+## Endpoints
+
+> `POST /v1/handoff/store`
+> `POST /v1/handoff/recover`
+
+These two routes are small, but they do serious work. `handoff/store` persists a continuity artifact around a concrete anchor. `handoff/recover` retrieves that artifact in forms that are safe for prompts and useful for execution.
+
+## What handoff is for
+
+Use handoff when useful work must survive one of these transitions:
+
+1. one session to the next
+2. one agent to another
+3. one runtime boundary to another
+4. one operator or reviewer to the next
+
+The key point is that handoff is not just archival text. It should preserve enough structure that the next actor does not have to guess where the task was, what mattered, and what should happen next.
+
+## What a first handoff integration should prove
+
+A good first handoff test is narrow and concrete:
+
+1. store a handoff against one real task anchor
+2. recover it in a fresh step or session
+3. confirm the recovered artifact still preserves target, next action, and continuity cues
+
+If that works, then Aionis is no longer just helping a model remember facts. It is preserving the boundary between one execution step and the next.
+
+## Minimal store + recover
+
+```bash
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff",
+    "anchor":"patch_review_001",
+    "handoff_kind":"task_handoff",
+    "summary":"Patch review paused for follow-up",
+    "handoff_text":"Next step is validating the failing test and updating the patch."
+  }' | jq '{request_id,commit_uri,handoff}'
+
+curl -sS "$BASE_URL/v1/handoff/recover" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_handoff",
+    "anchor":"patch_review_001",
+    "handoff_kind":"task_handoff"
+  }' | jq '{request_id,matched_nodes,prompt_safe_handoff,execution_ready_handoff}'
+```
+
+That example is intentionally plain. If a team cannot store one anchor and recover one usable continuity object, then handoff is not yet doing real work for them.
+
+## Why handoff matters beyond collaboration
+
+Handoff is also one of the first places where the execution continuity kernel becomes externally visible.
+
+On the current route path:
+
+1. `handoff/store` can persist continuity projections and transition metadata
+2. `handoff/recover` can surface updated structured continuity instead of rebuilding everything from handoff text alone
+
+That means handoff is not only for humans or multi-agent teams. It is also part of how Aionis carries task state across runtime boundaries without inventing a new public API family.
+
+## What to persist from handoff flows
+
+When handoff matters to the workflow, persist at least:
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. `commit_uri`
+5. `handoff.id`
+6. the `anchor` you used to store and recover
+
+Those fields make later review much easier. Without them, handoff may still work in the moment, but incident reconstruction and replay-adjacent investigation become much weaker.
+
+If you want the product-level explanation, read [Handoff Guide](/how/handoff). If you need exact request and response fields, go directly to [POST /v1/handoff/store + recover](/api-reference/endpoints/handoff).

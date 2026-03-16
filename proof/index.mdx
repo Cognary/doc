@@ -1,0 +1,119 @@
+---
+title: "Proof"
+description: "The shortest evidence path for evaluating Aionis: public benchmark disclosures, verification status, and the OpenClaw runtime demo."
+---
+
+# Proof
+
+If you only have a few minutes to decide whether Aionis is real, start here.
+
+This page collects the shortest defensible evidence path:
+
+1. public benchmark disclosures
+2. current docs verification status
+3. the strongest applied runtime demo
+
+That mix is deliberate. Good proof for a systems product should come from more than one layer. Public benchmark disclosures show what has already been published. Verification status shows what the current docs cycle actually re-ran against Lite. The runtime demo shows whether those surfaces matter in something closer to real usage than a bare HTTP example.
+
+If any one of those layers stood alone, it would be too easy to overread it. Benchmarks without runtime shape can feel abstract. Runtime stories without verification status can feel hand-wavy. Endpoint verification without public evidence can feel too narrow. Put together, they form a much more defensible evaluation path.
+
+## Fastest evidence path
+
+```text
+1. Read the public benchmark numbers
+2. Inspect OpenClaw as the runtime proof
+3. Check Verification Status for the current docs-cycle trust boundary
+4. Only then open the API pages you care about
+```
+
+## Public benchmark proof
+
+Current public material already supports these narrow claims:
+
+1. continuation work used fewer tokens with Aionis in current disclosed A/B slices
+2. cross-runtime handoff recovery improved on current published handoff slices
+3. strict replay has already been shown as a zero-model-token path on the disclosed repository slice
+
+Current disclosed numbers include:
+
+1. `30.03%` lower input tokens on the published continuation slice
+2. `77%` lower output tokens on the published continuation slice
+3. `33.24%` lower total tokens on the published continuation slice
+4. handoff recovery moving from `33.33%` to `100%`
+5. strict replay at `0` model tokens on the disclosed repository slice
+
+The word that matters here is narrow. These disclosures do not justify broad slogans like “Aionis always reduces tokens” or “Aionis always improves completion.” They justify something more serious: continuity discipline can produce measurable gains on disclosed slices, and Aionis already has public material supporting that claim.
+
+That is enough to justify evaluation. It is also enough to separate Aionis from projects that are still selling only a conceptual architecture story.
+
+## One practical local drill
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"proof_demo","input_text":"Customer prefers email","nodes":[{"type":"event","memory_lane":"shared","text_summary":"Customer prefers email"}]}' | jq
+
+curl -sS "$BASE_URL/v1/handoff/store" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"proof_demo","anchor":"task_001","handoff_kind":"task_handoff","summary":"Continue follow-up","handoff_text":"Draft the reply"}' | jq
+```
+
+## Runtime proof: OpenClaw
+
+OpenClaw is the strongest applied Aionis proof today.
+
+It shows Aionis shaping a real tool loop with:
+
+1. completion uplift
+2. churn reduction
+3. replay routing
+4. handoff fallback
+
+Current public adapter evidence supports these narrow runtime claims:
+
+1. live-task A/B reduced average executed steps from `7.33` to `3`
+2. GLM-5 semi-live slices reduced average total tokens from `1893` to `865.33`
+3. hard-stop and replay slices reduced average total tokens from `1659` to `1267`
+4. current completion slices moved from `completed_rate = 0` to `completed_rate = 1`
+5. repeated Google runtime-backed runs improved from `completed_rate = 0` to `0.8`
+
+OpenClaw matters because it turns the product from static docs into observable runtime behavior. You can see context assembly before action, policy signals before tool choice, feedback after execution, and replay or handoff behavior when the loop should not simply continue forward. That is much closer to how a serious buyer or developer will judge the product than a one-off write/recall demo.
+
+## Evidence ladder
+
+Use the evidence in this order.
+
+Start with the runtime story in [OpenClaw Adapter](/how/openclaw-adapter), because that is the easiest way to see Aionis acting on a real tool loop instead of a synthetic docs example. Then inspect [Benchmarks And SLO](/reference/benchmarks-and-slo) for the public benchmark layer, and use [Verification Status](/reference/verification-status) to see which parts of this site were re-run against Lite in the current cycle.
+
+Only after that should you go to [API Reference](/api-reference/). The API pages are useful once you already believe the product is worth serious evaluation. They are not the fastest way to decide whether the product is real.
+
+## If you are evaluating Aionis this week
+
+Use a short four-step path.
+
+Read this page first, then inspect [OpenClaw Adapter](/how/openclaw-adapter). After that, confirm the evidence boundary in [Verification Status](/reference/verification-status), and only then inspect the specific surfaces you care about in [API Reference](/api-reference/).
+
+That sequence prevents a common mistake: getting lost in endpoint details before you have formed a clear view of what Aionis has already proven publicly and what is still documented from current code.
+
+If you are a buyer, founder, or infra lead, this page should let you make one clean decision: does Aionis already have enough proof to justify a deeper technical review? That is the only job this page has.
+
+## Use the right page for the right question
+
+Use [Proof](/proof) when you want the shortest outside-in evaluation path, the current public numbers, and the boundary between public proof and docs verification.
+
+Use [OpenClaw Adapter](/how/openclaw-adapter) when you want the runtime story, the Aionis surface mapping, and the fastest serious applied demo path.
+
+## Public benchmark links
+
+1. [Agent Handoff and Replay](https://doc.aionisos.com/public/en/benchmarks/07-agent-handoff-and-replay)
+2. [Benchmark Snapshot](https://doc.aionisos.com/public/en/benchmarks/02-benchmark-snapshot-public)
+3. [Differentiation Evidence](https://doc.aionisos.com/public/en/benchmarks/03-differentiation-evidence)
+4. [OpenClaw Benchmark Summary](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-aionis-benchmark-summary.md)
+5. [OpenClaw One-Prompt Multi-Agent Case Study](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-one-prompt-multi-agent-case-study.md)
+6. [OpenClaw Google Runtime Case Study](https://github.com/Cognary/clawbot-aionis-adapter/blob/main/docs/2026-03-14-openclaw-google-runtime-case-study.md)
+
+If this page was enough to get you interested, the next practical choice is simple. Read [OpenClaw Adapter](/how/openclaw-adapter) if you want the strongest applied demo, or go to [Quickstart](/how/quickstart) if you want to make your own Lite instance prove the product in one short session.
+
+## Choose this page when
+
+Use this page when your question is “is there enough evidence here to justify deeper technical review?” If you already know the product is worth trying and just need routes and payloads, go to the API pages.

@@ -1,0 +1,67 @@
+---
+title: "Error Model"
+description: "Understand the shared Aionis API failure envelope and how clients should handle validation, lookup, rate-limit, and capability errors."
+---
+
+# Error Model
+
+Treat Aionis errors as part of the product contract, not an afterthought.
+
+## Standard response shape
+
+```json
+{
+  "error": "string_code",
+  "message": "human_readable_message",
+  "details": {}
+}
+```
+
+## One practical client rule
+
+Branch on status class first, then on `error`:
+
+1. `400`: contract or payload misuse
+2. `401/403`: credential or permission problem
+3. `404`: scope or object miss
+4. `409`: state conflict
+5. `429`: retry with backoff
+6. `501`: capability or edition boundary
+
+## Common classes
+
+1. `invalid_request` (400)
+2. `unauthorized` / `forbidden` (401/403)
+3. `not_found` (404)
+4. `state_conflict`-style conflicts (409)
+5. `rate_limited_*` (429)
+5. `backend_capability_unsupported` (501)
+
+## Error example and fix
+
+Example error:
+
+```json
+{
+  "error": "rate_limited_write",
+  "message": "too many requests",
+  "details": { "retry_after_ms": 800 }
+}
+```
+
+Fix:
+1. Retry after the provided delay.
+2. Add exponential backoff + jitter in client retry policy.
+3. Reduce burst concurrency for the affected endpoint group.
+
+## Recommended client behavior
+
+1. Retry transient network failures.
+2. Retry `429` using exponential backoff + jitter.
+3. Persist and display `request_id` for all failures.
+4. Log `error` + `details` to preserve incident triage context.
+5. Treat `501` as a deployment or edition boundary, not a retryable transient.
+
+## Choose this page when
+
+Use this page when you are wiring retry and failure handling into a client. Use [Common Errors](/reference/common-errors) when you want the shared families collected in one place. Use [API Contract](/reference/api-contract) when the question is about identifiers and route families instead of failures.

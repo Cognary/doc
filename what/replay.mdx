@@ -1,0 +1,76 @@
+---
+title: "Replay"
+description: "See how Aionis turns successful execution into reusable playbooks instead of one-time model work."
+---
+
+# Replay
+
+Replay is what makes Aionis feel like runtime infrastructure instead of memory infrastructure.
+
+## The product meaning of replay
+
+Replay means a successful run does not have to remain a one-time success.
+
+It can become:
+
+1. a captured run
+2. a compiled playbook
+3. a reusable execution path
+4. a governed repair and promotion flow
+
+## Smallest route map
+
+```text
+runs/get             -> inspect captured run evidence
+compile_from_run     -> turn one run into a playbook
+candidate/dispatch   -> decide reuse path
+playbooks/run        -> execute replay
+repair/review        -> govern replay repairs
+```
+
+## Why this matters
+
+Retrieval helps the model remember what happened.
+
+Replay helps the system reuse what already worked.
+
+That is where real cost and continuity leverage can become visible.
+
+## Why replay is different from memory
+
+Memory helps the runtime see prior facts.
+
+Replay helps the runtime avoid solving the same successful path from zero again.
+
+That difference is important. A system can remember a good run and still fail to reproduce it cheaply. Replay is the part that tries to convert prior successful execution into something reusable:
+
+1. a captured run
+2. a compiled playbook
+3. a deterministic or guided reuse decision
+4. a repair and review path when the original playbook is no longer good enough
+
+This is why replay is one of the strongest signs that Aionis is infrastructure, not just context management.
+
+## What to evaluate first
+
+Do not start by asking whether replay is universally deterministic.
+
+Start by asking narrower, more useful questions:
+
+1. can one successful run become a reusable playbook
+2. can the system tell you when strict reuse is safe and when it is not
+3. can replay failures become reviewable repair work instead of opaque runtime churn
+
+If those three things are true, replay is already creating operational leverage even before every route becomes fully optimized.
+
+## Continue from product to proof
+
+1. [Replay Guide](/how/replay)
+2. [Complete Flow](/how/complete-flow)
+3. [Replay Reference](/api-reference/replay)
+4. [Verification Status](/reference/verification-status)
+5. [OpenClaw Adapter](/how/openclaw-adapter)
+
+## Choose this page when
+
+Use this page when the pain is paying to rediscover a path that already worked once. If you need route-level details, move straight into the replay guide or replay API reference.

@@ -1,0 +1,69 @@
+---
+title: "Recall"
+description: "Retrieve structured memory results with explicit recall knobs, strategies, and optional rules context."
+---
+
+# POST /v1/memory/recall
+
+Use this endpoint when you need structured recall control instead of the simpler `recall_text` surface.
+
+It is the lower-level recall path for teams that need explicit recall strategy, richer result structure, and optional rules-aware recall shaping.
+
+## What it is for
+
+Use `recall` when:
+
+1. `recall_text` is too opinionated for the integration
+2. you need explicit recall knobs and strategy control
+3. you want structured recall output instead of a text-first surface
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/recall" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_recall",
+    "query_text":"customer follow-up preference",
+    "limit":5
+  }' | jq
+```
+
+## Request fields that matter first
+
+1. `tenant_id`
+2. `scope`
+3. `query_text`
+4. recall strategy and profile knobs
+5. optional `rules_context`
+
+## Response fields that matter first
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. recalled nodes and ranked results
+5. any attached rules evaluation output
+
+## Example response
+
+```json
+{
+  "request_id": "req_recall_001",
+  "tenant_id": "default",
+  "scope": "docs_recall",
+  "data": {
+    "results": [],
+    "ranked": []
+  }
+}
+```
+
+## What to watch
+
+This endpoint is more powerful than `recall_text`, but also easier to misuse. Start with the simplest recall profile that answers the real question before turning many knobs at once.
+
+## Choose this route when
+
+Use `recall` when you need explicit recall strategy and structured result control. If you just need a simple text-first retrieval surface, stay on `recall_text`.

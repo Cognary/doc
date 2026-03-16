@@ -1,0 +1,113 @@
+---
+title: "Memory APIs"
+description: "Use the Aionis memory and context endpoints to write durable execution facts, recover bounded context, and resolve stored artifacts."
+---
+
+# Memory APIs
+
+Memory is the shortest path from evaluation to real value in Aionis.
+
+This is where teams prove that useful work can survive beyond one model call or one session.
+
+That is why memory is usually the first API family people should touch. It demonstrates the product wedge with the least setup: something meaningful gets written, something meaningful comes back, and a later decision can depend on that surviving state instead of forcing the model to reconstruct it from scratch.
+
+## Endpoints
+
+> `POST /v1/memory/write`
+> `POST /v1/memory/recall`
+> `POST /v1/memory/recall_text`
+> `POST /v1/memory/planning/context`
+> `POST /v1/memory/context/assemble`
+> `POST /v1/memory/find`
+> `POST /v1/memory/resolve`
+
+These routes are easier to understand in three layers. `write` and `recall_text` prove that durable execution facts can be stored and recovered. `planning/context` and `context/assemble` prove that the next turn can get bounded, useful context instead of an undifferentiated dump. `find` and `resolve` exist for later inspection, recovery, and artifact lookup once your integration has started to generate meaningful history.
+
+## Write contract rules
+
+1. Include recallable `nodes` in write payload.
+2. `input_text` does not create nodes automatically.
+3. Empty-node writes may return `warnings[].code=write_no_nodes`.
+
+Those rules matter because a lot of “memory failed” complaints are really write-shape problems. A model call can produce text, but unless the write payload contains recallable structure, there may be little for Aionis to retrieve later. Good memory behavior starts with disciplined writes.
+
+## The first integration path that matters
+
+Start with:
+
+1. `write`
+2. `recall_text`
+3. `planning/context` or `context/assemble` after writes are stable
+
+That order is worth keeping. Teams often jump too early into assembled context before they have confidence in what is actually being written. If writes are weak, context assembly will only make weak memory feel more complicated. First make writes durable, then verify retrieval, then move into assembly.
+
+## Minimal write + recall
+
+```bash
+curl -sS "$BASE_URL/v1/memory/write" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"default","input_text":"hello","memory_lane":"shared","nodes":[{"type":"event","memory_lane":"shared","text_summary":"hello"}]}' | jq
+
+curl -sS "$BASE_URL/v1/memory/recall_text" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"default","query_text":"hello","limit":5}' | jq
+```
+
+## Example response (write, trimmed)
+
+```json
+{
+  "status": "ok",
+  "request_id": "req_xxx",
+  "tenant_id": "default",
+  "scope": "default",
+  "data": {
+    "commit_id": "commit_xxx",
+    "commit_uri": "memory://commit/commit_xxx"
+  }
+}
+```
+
+## Example response (recall_text, trimmed)
+
+```json
+{
+  "status": "ok",
+  "request_id": "req_yyy",
+  "tenant_id": "default",
+  "scope": "default",
+  "data": {
+    "context": "Customer prefers email follow-up ...",
+    "candidates": []
+  }
+}
+```
+
+## Response fields to keep
+
+1. `request_id`
+2. `tenant_id`
+3. `scope`
+4. `commit_id`
+5. `commit_uri`
+6. any resolved `node_uri` or artifact URI you need later for `find` or `resolve`
+
+Those identifiers become much more valuable once memory stops being a toy example. They let you correlate later resolution steps, recover exact artifacts, and trace whether the memory surface is helping or just accumulating data without operational value.
+
+## Error example and fix
+
+Example error:
+
+```json
+{
+  "error": "invalid_request",
+  "message": "write_nodes_required"
+}
+```
+
+Fix:
+1. Add at least one recallable node in `nodes[]`.
+2. Keep `tenant_id` and `scope` explicit in every request.
+3. Re-run write, then verify with `recall_text`.
+
+If you are integrating memory as a product feature, the next useful page is [Memory And Context Guide](/how/memory-context). If you are already debugging payload shape or field semantics, go directly to [POST /v1/memory/write](/api-reference/endpoints/write), [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text), or [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble).

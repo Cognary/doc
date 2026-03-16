@@ -1,0 +1,66 @@
+---
+title: "Replay Guide"
+description: "Use Aionis replay APIs to turn successful execution into reusable playbooks and governed replay paths."
+---
+
+# Replay
+
+Replay is where Aionis stops being only about remembering prior work and starts becoming about reusing prior execution.
+
+## What is live in code today
+
+Core replay routes include:
+
+1. `replay/runs/get`
+2. `replay/playbooks/compile_from_run`
+3. `replay/playbooks/get`
+4. `replay/playbooks/candidate`
+5. `replay/playbooks/run`
+6. `replay/playbooks/dispatch`
+
+## The three modes
+
+The actual replay run schema supports:
+
+1. `simulate`
+2. `strict`
+3. `guided`
+
+## Smallest useful proof
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/runs/get" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_replay","run_id":"replay_run_001"}' | jq
+
+curl -sS "$BASE_URL/v1/memory/replay/playbooks/compile_from_run" \
+  -H 'content-type: application/json' \
+  -d '{"tenant_id":"default","scope":"docs_replay","run_id":"replay_run_001"}' | jq
+```
+
+## How to evaluate replay without fooling yourself
+
+Replay is easy to overclaim and easy to misunderstand.
+
+The useful evaluation order is:
+
+1. can you capture a run
+2. can you compile it into a playbook
+3. can the system tell you whether strict reuse is actually safe
+4. can it fall back explicitly when strict reuse is not safe
+
+That order matters because replay value does not start only when every path becomes zero-token deterministic execution. It starts earlier, when successful execution can be turned into a reusable, reviewable operational asset.
+
+## What to look for in practice
+
+When you test replay, pay attention to:
+
+1. whether the playbook identity and version are durable
+2. whether candidate and dispatch surfaces make the gate explicit
+3. whether failed or partial reuse becomes repair work instead of silent runtime churn
+
+That is the difference between a flashy replay demo and a replay system you can actually trust.
+
+## Choose this guide when
+
+Use this page when your question is “can successful execution become a reusable operational asset?” If you are still proving basic memory or handoff, stay on those wedges first.

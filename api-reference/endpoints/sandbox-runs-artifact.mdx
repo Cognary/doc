@@ -1,0 +1,35 @@
+---
+title: "POST /v1/memory/sandbox/runs/artifact"
+description: "Fetch a sandbox run artifact through the artifact retrieval surface."
+---
+
+# POST /v1/memory/sandbox/runs/artifact
+
+Use this endpoint to retrieve artifacts produced by a sandbox run.
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/sandbox/runs/artifact" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_sandbox",
+    "run_id":"sandbox_run_001",
+    "artifact_id":"artifact_001"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "run_id": "sandbox_run_001",
+  "artifact_id": "artifact_001",
+  "content_type": "text/plain"
+}
+```
+
+## Choose this route when
+
+Use `runs/artifact` when the run already completed and you need one produced artifact. If you only need logs or status, use `runs/logs` or `runs/get`.

@@ -1,0 +1,89 @@
+---
+title: "Policy Guide"
+description: "Use the Aionis policy loop to evaluate rules, persist decisions, inspect runs, and feed back execution outcomes."
+---
+
+# Policy
+
+Policy is where Aionis becomes governable instead of just helpful.
+
+Without policy, memory only influences prompts.
+
+With policy, memory can influence action selection in a way operators can inspect.
+
+## What is live in code today
+
+The current policy loop is implemented around:
+
+1. `POST /v1/memory/rules/evaluate`
+2. `POST /v1/memory/tools/select`
+3. `POST /v1/memory/tools/decision`
+4. `POST /v1/memory/tools/run`
+5. `POST /v1/memory/tools/feedback`
+6. `POST /v1/memory/rules/state`
+
+## Smallest useful proof
+
+```bash
+curl -sS "$BASE_URL/v1/memory/rules/evaluate" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "context":{"intent":"support_triage"}
+  }' | jq
+
+curl -sS "$BASE_URL/v1/memory/tools/select" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_policy",
+    "run_id":"run_001",
+    "context":{"intent":"support_triage"},
+    "candidates":["ticket_router","email_sender"]
+  }' | jq
+```
+
+## What a useful first policy rollout looks like
+
+Do not start by trying to govern every action in the runtime.
+
+Start with one boundary where a bad choice is expensive:
+
+1. one tool family
+2. one risky workflow
+3. one decision point that already causes churn or confusion
+
+Then wire the minimum complete loop:
+
+1. evaluate rules
+2. select from a bounded candidate set
+3. persist the decision
+4. inspect the run
+5. send feedback after the outcome
+
+That is enough to prove whether Aionis policy is adding real control.
+
+## What to watch during the first rollout
+
+The point is not to create the biggest rules table.
+
+The point is to make one boundary inspectable. Watch for:
+
+1. whether `decision_id` and `run_id` stay connected across the loop
+2. whether `tools/select` filters or prioritizes candidates in a way you can explain later
+3. whether `tools/feedback` records a bounded outcome, even when no rule attribution happens
+
+If those things are visible, the policy loop is already useful.
+
+## Best first policy integration
+
+Start with one high-value decision boundary:
+
+1. tool choice for one risky workflow
+2. allow/deny/prefer guidance for a small candidate set
+3. feedback after real outcomes
+
+## Choose this guide when
+
+Use this page when you need action selection to become inspectable instead of prompt-shaped guesswork. If you are not yet choosing between tools or actions, memory and handoff are earlier wedges.

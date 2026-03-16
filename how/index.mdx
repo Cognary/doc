@@ -1,0 +1,64 @@
+---
+title: "How To Use Aionis"
+description: "Go from zero to first successful Aionis call with quickstart, complete flow, and integration guides."
+---
+
+# How To Use Aionis
+
+This layer exists for developers who are ready to try Aionis, not just evaluate the idea.
+
+The goal of this section is simple:
+
+Get a developer from zero to first successful Aionis call in under 30 minutes.
+
+That goal matters because infrastructure products live or die on first contact. If the first half hour is confusing, too abstract, or too setup-heavy, the product never gets the chance to prove its value. So this section is intentionally practical. It is written to get a developer from “I think I understand the idea” to “I made the product do something useful.”
+
+## The shortest useful path
+
+Start with [Quickstart](/how/quickstart). That gets you to a working Lite instance and a real `write -> recall -> handoff` loop with the least friction.
+
+## First 30-minute path
+
+```text
+1. Start Lite
+2. Run write
+3. Run recall_text
+4. Store one handoff
+5. Recover that handoff
+6. Only then look at policy or replay
+```
+
+Then move to [Complete Flow](/how/complete-flow) if you want to see how memory, context, decision surfaces, and handoff connect into one longer path. Only after that should you use [Endpoint Reference](/reference/endpoints), because the reference is more useful once you already have a mental model of the product in motion.
+
+If you want the strongest applied demo instead of the shortest API path:
+
+1. [OpenClaw Adapter](/how/openclaw-adapter)
+
+There are two valid ways to approach Aionis here.
+
+The first is the shortest product proof: start Lite, write one memory item, recall it, store a handoff, recover it, and confirm that continuity is no longer abstract. That path is ideal if you are still testing whether the basic proposition is real.
+
+The second is the strongest applied proof: run the OpenClaw adapter. That path is heavier, but it shows Aionis operating where it is most differentiated, at the tool-loop boundary inside a real runtime.
+
+## Success criteria
+
+Within the first session, a developer should be able to:
+
+1. run Lite locally or point to a Server endpoint
+2. complete one `write -> recall_text` loop
+3. store and recover one handoff
+4. understand where replay and policy fit next
+
+Those criteria are deliberately modest. The point of first success is not to master the whole system. It is to eliminate the biggest source of evaluation friction: uncertainty about whether the product really changes anything.
+
+If you can get through that first session and see usable context, explicit continuity, and recoverable handoff, then the next questions become worth asking. Before that, they usually are not.
+
+## After first success
+
+Then go one layer deeper. Read [Memory And Context Guide](/how/memory-context) if context quality is your first concern, [Policy Guide](/how/policy) if routing and control matter first, and [Replay Guide](/how/replay) if reuse and recovery are the next decision. Use [OpenClaw Adapter](/how/openclaw-adapter) when you want a serious runtime demo instead of another isolated guide page, and use [Reference](/reference) when you are ready for contract and operations details.
+
+The important thing is to deepen in the order your real integration will deepen. If your team is blocked on context quality, do not start with replay. If your first operational risk is uninspectable tool choice, do not bury yourself in memory write semantics. Aionis is easiest to adopt when you let the most painful boundary dictate the next guide you read.
+
+## Choose this page when
+
+Use this page when you are ready to make Aionis do something, not just read about it. It is the bridge from product understanding to first successful call.

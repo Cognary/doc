@@ -1,0 +1,50 @@
+---
+title: "POST /v1/memory/packs/import"
+description: "Import a memory pack into the current store under explicit administrative control."
+---
+
+# POST /v1/memory/packs/import
+
+Use this endpoint to import a previously exported memory pack under an administrative workflow.
+
+## What it is for
+
+1. controlled import and restoration
+2. migration and environment bootstrap
+3. administrative memory transfer workflows
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/packs/import" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_admin_pack",
+    "pack_id":"pack_001"
+  }' | jq
+```
+
+## Response fields that matter first
+
+1. `commit_id`
+2. `commit_uri`
+3. `imported_nodes`
+
+## Example response
+
+```json
+{
+  "commit_id": "commit_003",
+  "commit_uri": "memory://commit/commit_003",
+  "imported_nodes": 12
+}
+```
+
+## Important boundary
+
+This route is not part of the normal product wedge. It is an operational and administrative surface and should be used with the same care as data migration tooling.
+
+## Choose this route when
+
+Use `packs/import` when an exported pack must be restored or moved into another environment. For normal application writes, stay on `memory/write`.

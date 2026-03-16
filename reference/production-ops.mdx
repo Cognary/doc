@@ -1,0 +1,68 @@
+---
+title: "Production Operations"
+description: "Operate Aionis as a real system with deployment tiers, readiness signals, release gates, and production boundaries."
+---
+
+# Production Operations
+
+Use this page to judge whether Aionis can be operated as a real system, not only run as a demo.
+
+That means reading it with a practical question in mind: if this product moved from an engineer's laptop into a team workflow, what would have to be true for it to stay trustworthy? Production operations are not just about deployment. They are about whether the system exposes enough health, enough boundary, and enough separation between evaluation mode and serious service mode.
+
+## Production posture
+
+The current repository already distinguishes between local validation and serious deployment:
+
+1. Lite is the lowest-friction validation path
+2. Server is the control-plane and production-oriented path
+3. admin control and automations remain server-only
+
+## One practical production review
+
+```text
+1. Confirm edition and store capabilities
+2. Confirm auth and tenant boundary
+3. Confirm write/recall/policy smoke path
+4. Confirm monitoring and rollback ownership
+```
+
+That distinction is healthy and should stay visible in the docs. Lite exists to prove the product fast. Server exists because the moment you care about tenants, control-plane features, quotas, governance, and longer-lived operations, a local convenience runtime is not enough.
+
+Teams evaluating Aionis should resist the temptation to treat a successful Lite session as proof that all operational questions are solved. It proves the product wedge. It does not replace production design.
+
+## Deployment tiers
+
+The current operational model is easiest to understand in three tiers:
+
+1. standalone
+2. single-host service
+3. HA service
+
+Those tiers matter because different teams should evaluate different risks.
+
+A single developer or very small team can begin in standalone or single-host mode, where the goal is to validate product fit and internal workflow impact. A team moving toward shared use needs to think much earlier about service boundary, persistence, monitoring, and release discipline. High-availability thinking becomes relevant only when the product is already proven valuable enough to justify service-level expectations.
+
+## What `/health` already gives you
+
+Today it exposes operational facts such as:
+
+1. `aionis_edition`
+2. `memory_store_backend`
+3. capability-contract and store-capability fields
+4. sandbox health snapshot
+5. Lite route matrix when running Lite
+
+That health surface is more useful than a simple “service is up” check. It tells operators what edition is actually running, which store capabilities exist, and which boundaries should be assumed before a team starts wiring in more serious workloads.
+
+In practice, a good first operational review asks four questions:
+
+1. what edition is really running
+2. what memory and replay capabilities are actually available
+3. what control-plane or sandbox features are intentionally absent in this mode
+4. what should be monitored before another team is asked to depend on the service
+
+If you are pushing beyond evaluation, the next useful pages are [Operations](/operations/) for runbook-oriented detail, [Governance](/reference/governance) for control and audit boundary, and [Configuration Reference](/reference/configuration) for the knobs that actually shape runtime posture.
+
+## Choose this page when
+
+Use this page when the question is “can we operate this as a service?” If you are still proving the wedge on a laptop, Lite and Quickstart are earlier stops.

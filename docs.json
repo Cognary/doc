@@ -1,0 +1,146 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "linden",
+  "name": "Aionis",
+  "description": "Execution memory for agent systems that should not lose useful work.",
+  "colors": {
+    "primary": "#2d4038",
+    "light": "#5f766c",
+    "dark": "#22312b"
+  },
+  "favicon": "/favicon.svg",
+  "seo": {
+    "metatags": {
+      "canonical": "https://doc.aionisos.com"
+    },
+    "indexing": "navigable"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/Cognary/Aionis"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Quickstart",
+      "href": "/how/quickstart"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/Cognary/Aionis",
+      "website": "https://doc.aionisos.com"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Start",
+            "pages": [
+              "index",
+              "proof/index",
+              "why/index",
+              "what/index",
+              "how/index",
+              "reference/index"
+            ]
+          },
+          {
+            "group": "What",
+            "pages": [
+              "what/memory-context",
+              "what/handoff",
+              "what/replay",
+              "what/policy"
+            ]
+          },
+          {
+            "group": "First Success",
+            "pages": [
+              "how/quickstart",
+              "how/complete-flow",
+              "how/memory-context",
+              "how/handoff",
+              "how/replay",
+              "how/policy",
+              "how/sdk-and-http"
+            ]
+          },
+          {
+            "group": "Applied Demo",
+            "pages": [
+              "how/openclaw-adapter"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "how/codex",
+              "how/mcp",
+              "how/langgraph"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/api-contract",
+              "reference/common-errors",
+              "reference/verification-status",
+              "reference/endpoints/index",
+              "reference/production-ops",
+              "reference/governance",
+              "reference/security",
+              "reference/faq",
+              "reference/benchmarks-and-slo",
+              "reference/memory-layers"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": [
+              "api-reference/index",
+              "api-reference/authentication",
+              "api-reference/memory",
+              "api-reference/handoff",
+              "api-reference/policy",
+              "api-reference/replay",
+              "api-reference/sandbox",
+              "api-reference/errors"
+            ]
+          },
+          {
+            "group": "Endpoint Schemas",
+            "pages": [
+              "api-reference/endpoints/index"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Operations",
+        "groups": [
+          {
+            "group": "Operate",
+            "pages": [
+              "operations/index",
+              "operations/go-live",
+              "operations/monitoring",
+              "operations/incident-response",
+              "operations/runbooks"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+---
+title: "Governance"
+description: "Understand the Aionis governance surface across rule lifecycle, decision traceability, quotas, budgets, and audit events."
+---
+
+# Governance
+
+Use this page to understand the current surfaces that make Aionis governable instead of opaque.
+
+That matters because many agent systems can demonstrate behavior without exposing enough control to make that behavior safe, reviewable, or teachable. Aionis becomes much more useful when policy, decision traceability, quotas, and audit evidence are treated as first-class surfaces rather than hidden implementation details.
+
+## Governance surface
+
+The current governance story has four parts:
+
+1. policy lifecycle
+2. decision traceability
+3. quotas and budgets
+4. audit events and release evidence
+
+## One practical governance chain
+
+```text
+rules/evaluate -> tools/select -> decision_id/run_id -> tools/feedback -> rules/state
+```
+
+Taken together, those parts answer the core operator question: can we explain why the system acted the way it did, and can we bound that behavior when it matters? If the answer is no, then memory and replay alone are not enough. The product may still be interesting, but it is not yet governable.
+
+## Rule lifecycle
+
+Rules already move through explicit states:
+
+1. `draft`
+2. `shadow`
+3. `active`
+4. `disabled`
+
+That lifecycle is important because policy changes should not jump directly from idea to enforcement. Draft lets a team define intent. Shadow lets them observe likely behavior without committing to it. Active is for rules that are ready to shape real execution. Disabled preserves traceability without pretending the rule still governs the run.
+
+## Decision traceability
+
+The policy loop persists identifiers that make review possible:
+
+1. `run_id`
+2. `decision_id`
+3. `decision_uri`
+4. `commit_uri`
+
+Those identifiers matter because review without traceability turns into storytelling. A team should be able to answer which run produced a decision, which decision led to a tool choice, and which persisted commit or handoff artifact belongs to that chain.
+
+Governance also includes restraint. Budgets, quotas, and release evidence exist to stop the system from becoming an unbounded optimization experiment inside production workflows. Good governance in Aionis means the product is not only effective when it works, but inspectable when it fails, changes, or gets challenged.
+
+## Choose this page when
+
+Use this page when the question is “can we explain and bound what the system did?” If the question is still just “does the product work?”, this page is too deep.
+
+If your next question is about how policy is experienced by developers, read [Policy Guide](/how/policy). If your next question is about the durable objects and identifiers behind those controls, read [API Contract](/reference/api-contract). If your next question is operational, go to [Runbooks](/operations/runbooks).

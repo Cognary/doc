@@ -1,0 +1,43 @@
+---
+title: "POST /v1/memory/replay/step/after"
+description: "Record post-step replay state after a host runtime step completes."
+---
+
+# POST /v1/memory/replay/step/after
+
+Use this endpoint when a host runtime records replay state after a step executes.
+
+## What it is for
+
+1. low-level replay instrumentation
+2. step-by-step capture after execution
+3. richer replay reconstruction later
+
+## Minimal request
+
+```bash
+curl -sS "$BASE_URL/v1/memory/replay/step/after" \
+  -H 'content-type: application/json' \
+  -d '{
+    "tenant_id":"default",
+    "scope":"docs_replay",
+    "run_id":"replay_run_001",
+    "step_id":"step_001",
+    "outcome":"success"
+  }' | jq
+```
+
+## Example response
+
+```json
+{
+  "ok": true,
+  "run_id": "replay_run_001",
+  "step_id": "step_001",
+  "phase": "after"
+}
+```
+
+## Choose this route when
+
+Use `step/after` only when you are recording replay state around each step. If your question is at playbook level, stay on the playbook endpoints.

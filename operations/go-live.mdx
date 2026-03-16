@@ -1,0 +1,58 @@
+---
+title: "Go-live Checklist"
+description: "Run the Aionis go-live checklist before enabling production traffic, with rollout, rollback, and replay evidence in place."
+---
+
+# Go-live Checklist
+
+Use this checklist before enabling production traffic.
+
+The checklist works best when it is treated as evidence gathering, not ritual. Each item exists because rollout risk in Aionis is not only about uptime. It is also about whether continuity, decision linkage, and replay evidence remain good enough once real traffic starts flowing.
+
+## T-24h checks
+
+1. Core gate passes in staging.
+2. Authentication and isolation settings verified.
+3. Rollback owner and release owner assigned.
+4. Replay evidence chain prepared.
+5. Monitoring dashboards and alert channels active.
+
+## Minimal launch checklist
+
+```text
+[ ] auth and tenant boundary verified
+[ ] write/recall/policy smoke path passes
+[ ] rollback owner assigned
+[ ] monitoring active
+[ ] replay evidence chain prepared
+```
+
+The most important line there is replay evidence chain prepared. A system that cannot explain itself before launch usually cannot explain itself after launch either. Preparing that chain means knowing which identifiers, traces, and checks will be used if a rollout has to be challenged or reversed.
+
+## T-2h checks
+
+1. Target environment health is green.
+2. Write/recall/policy smoke path passes.
+3. Release artifact and version metadata finalized.
+
+Those checks are deliberately narrow. They are there to prove that the specific surfaces your users are about to depend on are still intact in the target environment, not just that a generic service health check is green.
+
+## Launch checks
+
+1. Shift traffic gradually.
+2. Track p95 latency and error rate during rollout window.
+3. Keep rollback path ready and tested.
+
+A gradual shift matters because Aionis is often introduced at a boundary inside an existing system. The safest rollouts keep the escape hatch obvious: if continuity or policy quality degrades under real traffic, rollback should be faster than debate.
+
+## Post-release checks
+
+1. Re-run core gate.
+2. Validate decision/feedback linkage.
+3. Archive release evidence package.
+
+Those post-release checks are what turn a deployment into a controlled release rather than a hopeful one. If you have launched and now need to watch the system in steady state, go to [Monitoring And SLO](/operations/monitoring). If the rollout already produced a failure or regression, go straight to [Incident Response And Replay](/operations/incident-response).
+
+## Choose this page when
+
+Use this page when traffic is actually about to move. It is for rollout readiness, not general product evaluation.
