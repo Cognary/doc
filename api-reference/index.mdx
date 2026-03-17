@@ -137,20 +137,67 @@ Those five groups are enough to orient most readers. Memory is how useful execut
 
 ## Endpoint schema pages
 
-1. [Endpoint Schemas Index](/api-reference/endpoints/)
-2. [POST /v1/memory/write](/api-reference/endpoints/write)
-3. [POST /v1/memory/recall_text](/api-reference/endpoints/recall-text)
-4. [POST /v1/memory/context/assemble](/api-reference/endpoints/context-assemble)
-5. [POST /v1/memory/rules/evaluate](/api-reference/endpoints/rules-evaluate)
-6. [POST /v1/memory/tools/select](/api-reference/endpoints/tools-select)
-7. [POST /v1/handoff/store + recover](/api-reference/endpoints/handoff)
-8. [POST /v1/memory/resolve](/api-reference/endpoints/resolve)
-9. [POST /v1/memory/replay/runs/get](/api-reference/endpoints/replay-runs-get)
-10. [POST /v1/memory/replay/playbooks/compile_from_run](/api-reference/endpoints/replay-compile-from-run)
-11. [POST /v1/memory/replay/playbooks/get](/api-reference/endpoints/replay-playbook-get)
-12. [POST /v1/memory/replay/playbooks/candidate](/api-reference/endpoints/replay-playbook-candidate)
-13. [POST /v1/memory/replay/playbooks/run](/api-reference/endpoints/replay-run)
-14. [POST /v1/memory/replay/playbooks/dispatch](/api-reference/endpoints/replay-dispatch)
-15. [POST /v1/memory/replay/playbooks/repair/review](/api-reference/endpoints/replay-repair-review)
+<div className="link-cards link-cards--compact">
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/">
+    <span className="link-card-title">Endpoint Schemas Index</span>
+    <span className="link-card-desc">Open the route clusters and jump by task family.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/write">
+    <span className="link-card-title">POST /v1/memory/write</span>
+    <span className="link-card-desc">Persist durable memory and continuity state.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/recall-text">
+    <span className="link-card-title">POST /v1/memory/recall_text</span>
+    <span className="link-card-desc">Recover natural-language context for the next request.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/context-assemble">
+    <span className="link-card-title">POST /v1/memory/context/assemble</span>
+    <span className="link-card-desc">Build bounded context bundles instead of raw recall output.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/rules-evaluate">
+    <span className="link-card-title">POST /v1/memory/rules/evaluate</span>
+    <span className="link-card-desc">Evaluate policy before action.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/tools-select">
+    <span className="link-card-title">POST /v1/memory/tools/select</span>
+    <span className="link-card-desc">Select the next tool under current policy and continuity state.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/handoff">
+    <span className="link-card-title">POST /v1/handoff/store + recover</span>
+    <span className="link-card-desc">Carry continuation across sessions, agents, or reviewers.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/resolve">
+    <span className="link-card-title">POST /v1/memory/resolve</span>
+    <span className="link-card-desc">Inspect and resolve saved runtime objects by URI.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-runs-get">
+    <span className="link-card-title">POST /v1/memory/replay/runs/get</span>
+    <span className="link-card-desc">Load run details for replay and incident analysis.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-compile-from-run">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/compile_from_run</span>
+    <span className="link-card-desc">Turn a successful run into a reusable replay candidate.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-playbook-get">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/get</span>
+    <span className="link-card-desc">Load a playbook and inspect replay details.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-playbook-candidate">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/candidate</span>
+    <span className="link-card-desc">Find replay candidates before dispatch or run.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-run">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/run</span>
+    <span className="link-card-desc">Execute a replay playbook path.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-dispatch">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/dispatch</span>
+    <span className="link-card-desc">Dispatch replay through the controlled execution path.</span>
+  </a>
+  <a className="link-card link-card--compact" href="/api-reference/endpoints/replay-repair-review">
+    <span className="link-card-title">POST /v1/memory/replay/playbooks/repair/review</span>
+    <span className="link-card-desc">Review replay repair proposals before promotion.</span>
+  </a>
+</div>
 
 If you already know which part of the system you care about, go straight into that group page or endpoint page. If you still need the boundary around identifiers and guarantees, the next useful page is [API Contract](/reference/api-contract). If you need to know what was re-run in the current validation cycle, use [Verification Status](/reference/verification-status).
